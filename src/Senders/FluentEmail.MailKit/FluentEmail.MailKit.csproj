@@ -7,13 +7,15 @@
     <PackageTags>$(PackageTags);mailkit</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>FluentEmail.MailKitSmtp</RootNamespace>
-  </PropertyGroup>
+    <PackageId>jcamp.$(AssemblyName)</PackageId>
+    <Product>jcamp.$(AssemblyName)</Product>
+</PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\FluentEmail.Core\FluentEmail.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.10.1" />
+    <PackageReference Include="MailKit" Version="3.5.0" />
   </ItemGroup>
 </Project>
