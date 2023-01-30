@@ -8,7 +8,6 @@
     <PackageIcon>fluentemail_logo_64x64.png</PackageIcon>
     <PackageProjectUrl>https://github.com/jcamp-code/FluentEmail</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jcamp-code/FluentEmail</RepositoryUrl>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>3.0.3</Version>
