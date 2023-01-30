@@ -5,9 +5,11 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using System.IO;
+using System.Net.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MailKit;
 
 namespace FluentEmail.MailKitSmtp
 {
@@ -17,6 +19,7 @@ namespace FluentEmail.MailKitSmtp
     public class MailKitSender : ISender
     {
         private readonly SmtpClientOptions _smtpClientOptions;
+        private readonly IProtocolLogger _protocolLogger;
 
         /// <summary>
         /// Creates a sender that uses the given SmtpClientOptions when sending with MailKit. Since the client is internal this will dispose of the client.
@@ -25,6 +28,12 @@ namespace FluentEmail.MailKitSmtp
         public MailKitSender(SmtpClientOptions smtpClientOptions)
         {
             _smtpClientOptions = smtpClientOptions;
+        }
+
+        public MailKitSender(SmtpClientOptions smtpClientOptions, IProtocolLogger protocolLogger)
+        {
+            _smtpClientOptions = smtpClientOptions;
+            _protocolLogger = protocolLogger;
         }
 
         /// <summary>
@@ -52,8 +61,13 @@ namespace FluentEmail.MailKitSmtp
                     return response;
                 }
 
-                using (var client = new SmtpClient())
+                using (var client = _protocolLogger == null ? new SmtpClient() : new SmtpClient(_protocolLogger))
                 {
+                    if(_smtpClientOptions.ServerCertificateValidationCallback != null)
+                    {
+                        client.ServerCertificateValidationCallback = _smtpClientOptions.ServerCertificateValidationCallback;
+                    }
+
                     if (_smtpClientOptions.SocketOptions.HasValue)
                     {
                         client.Connect(
@@ -110,12 +124,18 @@ namespace FluentEmail.MailKitSmtp
             {
                 if (_smtpClientOptions.UsePickupDirectory)
                 {
-                    await this.SaveToPickupDirectory(message, _smtpClientOptions.MailPickupDirectory);
+                    var messageId = await this.SaveToPickupDirectory(message, _smtpClientOptions.MailPickupDirectory);
+                    response.MessageId = messageId;
                     return response;
                 }
 
-                using (var client = new SmtpClient())
+                using (var client = _protocolLogger == null ? new SmtpClient() : new SmtpClient(_protocolLogger))
                 {
+                    if (_smtpClientOptions.ServerCertificateValidationCallback != null)
+                    {
+                        client.ServerCertificateValidationCallback = _smtpClientOptions.ServerCertificateValidationCallback;
+                    }
+
                     if (_smtpClientOptions.SocketOptions.HasValue)
                     {
                         await client.ConnectAsync(
@@ -156,20 +176,24 @@ namespace FluentEmail.MailKitSmtp
         /// </summary>
         /// <param name="message">Message to save for pickup.</param>
         /// <param name="pickupDirectory">Pickup directory.</param>
-        private async Task SaveToPickupDirectory(MimeMessage message, string pickupDirectory)
+        private async Task<string> SaveToPickupDirectory(MimeMessage message, string pickupDirectory)
         {
             // Note: this will require that you know where the specified pickup directory is.
-            var path = Path.Combine(pickupDirectory, Guid.NewGuid().ToString() + ".eml");
+            var messageId = Guid.NewGuid().ToString();
+            var path = Path.Combine(pickupDirectory, messageId + ".eml");
 
             if (File.Exists(path))
-                return;
+                return null;
 
             try
             {
+                //create the directory since it might not exist
+                Directory.CreateDirectory(pickupDirectory);
+
                 using (var stream = new FileStream(path, FileMode.CreateNew))
                 {
                     await message.WriteToAsync(stream);
-                    return;
+                    return messageId;
                 }
             }
             catch (IOException)
@@ -219,8 +243,18 @@ namespace FluentEmail.MailKitSmtp
 
             data.Attachments.ForEach(x =>
             {
-                var attachment = builder.Attachments.Add(x.Filename, x.Data, ContentType.Parse(x.ContentType));
-                attachment.ContentId = x.ContentId;
+                var contentType = ContentType.Parse(x.ContentType);
+
+                if (x.IsInline)
+                {
+                    var attachment = builder.LinkedResources.Add(x.Filename, x.Data, contentType);
+                    attachment.ContentId = x.ContentId ?? x.Filename;
+                }
+                else
+                {
+                    var attachment = builder.Attachments.Add(x.Filename, x.Data, contentType);
+                    attachment.ContentId = x.ContentId;
+                }
             });
 
 
