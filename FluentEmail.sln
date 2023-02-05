@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6DC215BD-05EF-49A6-ADBE-8AE399952EEC}"
 EndProject
@@ -13,8 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Senders", "Senders", "{926C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7B3C8C77-C54A-4F9E-A241-676AC01E49BB}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
 		src\Directory.Build.props = src\Directory.Build.props
-		README.markdown = README.markdown
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Renderers", "Renderers", "{47CB89AC-9615-4FA8-90DE-2D849935C36D}"
@@ -43,7 +44,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentEmail.Liquid", "src\R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentEmail.Liquid.Tests", "test\FluentEmail.Liquid.Tests\FluentEmail.Liquid.Tests.csproj", "{C8063CBA-D8F3-467A-A75C-63843F0DE862}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentEmail.Azure.Email", "src\Senders\FluentEmail.Azure.Email\FluentEmail.Azure.Email.csproj", "{7A36357D-5CE6-4E90-BE5F-8E51553F6846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentEmail.Azure.Email", "src\Senders\FluentEmail.Azure.Email\FluentEmail.Azure.Email.csproj", "{7A36357D-5CE6-4E90-BE5F-8E51553F6846}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentEmail.Postmark", "src\Senders\FluentEmail.Postmark\FluentEmail.Postmark.csproj", "{089AADB3-D9DF-4EAF-9D0E-AF343AF310DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{1B6987D8-3785-4A78-8637-40E321CC2877}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
+		.github\workflows\publish-packages.yml = .github\workflows\publish-packages.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +112,10 @@ Global
 		{7A36357D-5CE6-4E90-BE5F-8E51553F6846}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A36357D-5CE6-4E90-BE5F-8E51553F6846}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A36357D-5CE6-4E90-BE5F-8E51553F6846}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089AADB3-D9DF-4EAF-9D0E-AF343AF310DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{089AADB3-D9DF-4EAF-9D0E-AF343AF310DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{089AADB3-D9DF-4EAF-9D0E-AF343AF310DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{089AADB3-D9DF-4EAF-9D0E-AF343AF310DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +137,8 @@ Global
 		{17100F47-A555-4756-A25F-4F05EDAFA74E} = {12F031E5-8DDC-40A0-9862-8764A6E190C0}
 		{C8063CBA-D8F3-467A-A75C-63843F0DE862} = {47CB89AC-9615-4FA8-90DE-2D849935C36D}
 		{7A36357D-5CE6-4E90-BE5F-8E51553F6846} = {926C0980-31D9-4449-903F-3C756044C28A}
+		{089AADB3-D9DF-4EAF-9D0E-AF343AF310DE} = {926C0980-31D9-4449-903F-3C756044C28A}
+		{1B6987D8-3785-4A78-8637-40E321CC2877} = {7B3C8C77-C54A-4F9E-A241-676AC01E49BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23736554-5288-4B30-9710-B4D9880BCF0B}

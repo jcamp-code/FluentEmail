@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FluentEmail.Core\FluentEmail.Core.csproj" />
     <ProjectReference Include="..\..\src\Senders\FluentEmail.Azure.Email\FluentEmail.Azure.Email.csproj" />
+    <ProjectReference Include="..\..\src\Senders\FluentEmail.Postmark\FluentEmail.Postmark.csproj" />
     <ProjectReference Include="..\..\src\Senders\FluentEmail.Smtp\FluentEmail.Smtp.csproj" />
     <ProjectReference Include="..\..\src\Senders\FluentEmail.MailKit\FluentEmail.MailKit.csproj" />
     <ProjectReference Include="..\..\src\Senders\FluentEmail.Graph\FluentEmail.Graph.csproj" />
@@ -28,6 +29,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <EmbeddedResource Include="test-embedded.txt" />
+    <PackageReference Include="FluentAssertions" Version="6.9.0" />
     <None Update="logotest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
