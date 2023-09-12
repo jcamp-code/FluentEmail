@@ -84,14 +84,14 @@ public class AzureEmailSender : ISender
         
         if(email.Data.CcAddresses.Any())
         {
-            email.Data.CcAddresses.ForEach(r => ccRecipients.Add(new EmailAddress($"cc{r.EmailAddress}", r.Name)));
+            email.Data.CcAddresses.ForEach(r => ccRecipients.Add(new EmailAddress(r.EmailAddress, r.Name)));
         }
         
         var bccRecipients = new List<EmailAddress>();
         
         if(email.Data.BccAddresses.Any())
         {
-            email.Data.BccAddresses.ForEach(r => bccRecipients.Add(new EmailAddress($"bcc{r.EmailAddress}", r.Name)));
+            email.Data.BccAddresses.ForEach(r => bccRecipients.Add(new EmailAddress(r.EmailAddress, r.Name)));
         }
         
         var emailRecipients = new EmailRecipients(toRecipients, ccRecipients, bccRecipients);
