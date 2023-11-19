@@ -17,11 +17,11 @@ namespace FluentEmail.Mailgun.Tests
         [SetUp]
         public void SetUp()
         {
-            var sender = new MailgunSender("sandboxcf5f41bbf2f84f15a386c60e253b5fe9.mailgun.org", "key-8d32c046d7f14ada8d5ba8253e3e30de");
+            var sender = new MailgunSender("<name>", "<key>");
             Email.DefaultSender = sender;
         }
 
-        [Test]
+        [Test, Ignore("Missing credentials")]
         public async Task CanSendEmail()
         {
             var email = Email
@@ -35,7 +35,7 @@ namespace FluentEmail.Mailgun.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test]
+        [Test, Ignore("Missing credentials")]
         public async Task GetMessageIdInResponse()
         {
             var email = Email
@@ -50,7 +50,7 @@ namespace FluentEmail.Mailgun.Tests
             Assert.IsNotEmpty(response.MessageId);
         }
 
-        [Test]
+        [Test, Ignore("Missing credentials")]
         public async Task CanSendEmailWithTag()
         {
             var email = Email
@@ -65,7 +65,7 @@ namespace FluentEmail.Mailgun.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test]
+        [Test, Ignore("Missing credentials")]
         public async Task CanSendEmailWithVariables()
         {
             var email = Email
@@ -80,7 +80,7 @@ namespace FluentEmail.Mailgun.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test]
+        [Test, Ignore("Missing credentials")]
         public async Task CanSendEmailWithAttachments()
         {
             var stream = new MemoryStream();
@@ -108,7 +108,7 @@ namespace FluentEmail.Mailgun.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test]
+        [Test, Ignore("Missing credentials")]
         public async Task CanSendEmailWithInlineImages()
         {
             using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
