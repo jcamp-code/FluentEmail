@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.3.1
+
+- Added MailKit builder to use injected config to allow it to come from .NET config system
+- Updated to MailKit 4.3.0
+
 ## v3.3
 
 - Added support for mailgun templates - [Original Source/Credit](https://github.com/gps-lasrol/FluentEmail/tree/support-mailgun-templates)
