@@ -1,4 +1,4 @@
-![alt text](https://github.com/lukencode/FluentEmail/raw/master/assets/fluentemail_logo_64x64.png 'FluentEmail')
+![alt text](https://github.com/lukencode/FluentEmail/raw/master/assets/fluentemail_logo_64x64.png "FluentEmail")
 
 # FluentEmail - All in one email sender for .NET and .NET Core
 
@@ -26,7 +26,8 @@ Original blog post here for a detailed guide [A complete guide to send email in 
 
 ### Mail Provider Integrations
 
-- [FluentEmail.Postmark](src/Senders/FluentEmail.Postmark) - Send emails via Postmark's REST API.  [Original Source/Credit](https://github.com/georg-jung/FluentEmail.Postmark)
+- [FluentEmail.Azure](src/Senders/FluentEmail.Azure.Email) - Send emails via Azure Email Communication Services API
+- [FluentEmail.Postmark](src/Senders/FluentEmail.Postmark) - Send emails via Postmark's REST API. [Original Source/Credit](https://github.com/georg-jung/FluentEmail.Postmark)
 - [FluentEmail.Mailgun](src/Senders/FluentEmail.Mailgun) - Send emails via MailGun's REST API.
 - [FluentEmail.SendGrid](src/Senders/FluentEmail.SendGrid) - Send email via the SendGrid API.
 - [FluentEmail.Mailtrap](src/Senders/FluentEmail.Mailtrap) - Send emails to Mailtrap. Uses [FluentEmail.Smtp](src/Senders/FluentEmail.Smtp) for delivery.

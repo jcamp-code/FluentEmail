@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.4.0
+
+- Added MailPace sender - thanks [@maartenba](https://github.com/maartenba)
+
 ## v3.3.1
 
 - Added MailKit builder to use injected config to allow it to come from .NET config system
