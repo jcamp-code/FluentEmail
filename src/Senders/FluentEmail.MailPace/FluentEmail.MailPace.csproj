@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>Send emails via MailPace using their REST API</Description>
+        <AssemblyTitle>Fluent Email - MailPace</AssemblyTitle>
+        <PackageTags>$(PackageTags);mailpace</PackageTags>
+        <TargetFramework>net6.0</TargetFramework>
+        <PackageId>jcamp.$(AssemblyName)</PackageId>
+        <Product>jcamp.$(AssemblyName)</Product>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\FluentEmail.Core\FluentEmail.Core.csproj" />
+    </ItemGroup>
+
+</Project>
