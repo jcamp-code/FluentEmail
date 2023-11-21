@@ -28,6 +28,7 @@
     <None Update="*.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="EmailTemplates\test-embedded.txt" />
     <EmbeddedResource Include="test-embedded.txt" />
     <PackageReference Include="FluentAssertions" Version="6.9.0" />
     <None Update="logotest.png">

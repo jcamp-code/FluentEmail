@@ -109,6 +109,32 @@ namespace FluentEmail.Core.Tests
 
 			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
 		}
+
+		[Test]
+		public void Using_Template_From_Root_Configured_Embedded_Resource()
+		{
+			EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests");
+			var email = Email
+				.From(fromEmail)
+				.To(toEmail)
+				.Subject(subject)
+				.UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDEDTEST" });
+
+			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
+		}
+		
+		[Test]
+		public void Using_Template_From_Configured_Embedded_Resource()
+		{
+			EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests.EmailTemplates");
+			var email = Email
+				.From(fromEmail)
+				.To(toEmail)
+				.Subject(subject)
+				.UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDEDTEST" });
+
+			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
+		}
 		
 		[Test]
 		public void New_Anonymous_Model_Template_From_File_Matches()
