@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this FluentEmailServicesBuilder builder,
             Action<LiquidRendererOptions>? configure = null)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetCallingAssembly();
             var name = assembly.GetName().Name;
             return AddLiquidRendererWithEmbedded(builder, assembly, $"{name}.EmailTemplates", configure);
         }
@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
             string rootPath,
             Action<LiquidRendererOptions>? configure = null)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetCallingAssembly();
             var name = assembly.GetName().Name;
             if (!string.IsNullOrEmpty(rootPath)) name += "."; 
             return AddLiquidRendererWithEmbedded(builder, assembly, $"{name}{rootPath}", configure);

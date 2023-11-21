@@ -135,7 +135,7 @@ var email = Email
 There is a set of extensions in `EmbeddedTemplates` that allows for use of embedded templates without specifying the assembly and the path every time.
 
 ```csharp
-EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests");
+EmbeddedTemplates.Configure(Assembly.GetCallingAssembly(), "FluentEmail.Core.Tests");
 var email = Email
     .From(fromEmail)
     .To(toEmail)
@@ -151,7 +151,7 @@ There is a default of the executing assembly with Templates in `EmailTemplates`
 
 ```csharp
 builder.Services.AddFluentEmail("defaultfrom@email.com")
-    .AddLiquidRendererWithEmbedded(Assembly.GetExecutingAssembly(), "AssemblyName.EmailTemplates")
+    .AddLiquidRendererWithEmbedded(Assembly.GetCallingAssembly(), "AssemblyName.EmailTemplates")
 
 // These are the same     
 builder.Services.AddFluentEmail("defaultfrom@email.com")

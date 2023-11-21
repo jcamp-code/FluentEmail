@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.5.1
+
+- Use GetCallingAssembly() rather than GetExecutingAssemby() in LiquidRenderer builder extensions
+
 ## v3.5.0
 
 - Added simplified configuration to setup and use embedded templates with and without the LiquidRenderer.
