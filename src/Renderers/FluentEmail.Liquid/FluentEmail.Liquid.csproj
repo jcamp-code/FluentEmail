@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fluid.Core" Version="2.3.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.13" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 
 # FluentEmail - All in one email sender for .NET and .NET Core
 
-The easiest way to send email from .NET and .NET Core. Use Razor for email templates and send using SendGrid, MailGun, SMTP and more.
+The easiest way to send email from .NET and .NET Core. Use Razor or Liquid for email templates and send using SendGrid, MailGun, MailKit, SMTP and more.
 
 Forked from original by **[@lukencode](https://github.com/lukencode/fluentemail)**
 
@@ -128,6 +128,44 @@ var email = Email
     .To("somedude@gmail.com")
     .Subject("woo nuget")
     .UsingTemplate(template, new ViewModel { Name = "Luke", Compliment = "Awesome" });
+```
+
+## Embedded Templates
+
+There is a set of extensions in `EmbeddedTemplates` that allows for use of embedded templates without specifying the assembly and the path every time.
+
+```csharp
+EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests");
+var email = Email
+    .From(fromEmail)
+    .To(toEmail)
+    .Subject(subject)
+    .UsingTemplateFromEmbedded("templatename.liquid", new ViewModel { Name = "Luke", Compliment = "Awesome" });
+```
+
+## Embedded Templates with Liquid Renderer
+
+Because the Liquid templates can also be configured with an embedded provider, there are builder extensions that will configure both the embedded file provider for layouts and the `EmbeddedTemplates` extensions.
+
+There is a default of the executing assembly with Templates in `EmailTemplates`
+
+```csharp
+builder.Services.AddFluentEmail("defaultfrom@email.com")
+    .AddLiquidRendererWithEmbedded(Assembly.GetExecutingAssembly(), "AssemblyName.EmailTemplates")
+
+// These are the same     
+builder.Services.AddFluentEmail("defaultfrom@email.com")
+    .AddLiquidRendererWithEmbedded()
+```
+
+## How to set all templates as embedded in the `csproj` file
+
+If you want all templates in a folder to automatically be embedded, use the following in your `csproj` file.
+
+```xml
+  <ItemGroup>
+    <EmbeddedResource Include="EmailTemplates/**/*.liquid" />
+  </ItemGroup>
 ```
 
 ## Sending Emails

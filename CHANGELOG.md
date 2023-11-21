@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.5.0
+
+- Added simplified configuration to setup and use embedded templates with and without the LiquidRenderer.
+
 ## v3.4.0
 
 - Added MailPace sender - thanks [@maartenba](https://github.com/maartenba)

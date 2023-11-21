@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.4.0</Version>
+    <Version>3.5.0</Version>
 
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

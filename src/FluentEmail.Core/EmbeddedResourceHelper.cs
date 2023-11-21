@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 
 namespace FluentEmail.Core
@@ -7,14 +8,14 @@ namespace FluentEmail.Core
     {
         internal static string GetResourceAsString(Assembly assembly, string path)
         {
-            string result;
-
-            using (var stream = assembly.GetManifestResourceStream(path))
-            using (var reader = new StreamReader(stream))
+            using var stream = assembly.GetManifestResourceStream(path);
+            if (stream is null)
             {
-                result = reader.ReadToEnd();
+                throw new Exception($"{path} was not found in embedded resources.");
             }
 
+            using var reader = new StreamReader(stream);
+            var result = reader.ReadToEnd();
             return result;
         }
     }
