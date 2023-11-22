@@ -26,7 +26,7 @@ public static class EmbeddedTemplates
     {
         if (_assembly is null)
         {
-            throw new Exception("FluentEmailEmbeddedExtensions.Configure must be called with default assembly and root path");
+            throw new Exception("FluentEmail.Core.EmbeddedTemplates.Configure must be called with default assembly and root path");
         }
 
         var root = _rootPath;

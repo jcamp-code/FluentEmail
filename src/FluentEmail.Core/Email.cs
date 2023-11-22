@@ -401,9 +401,9 @@ namespace FluentEmail.Core
         }
 
         /// <summary>
-        /// Adds razor template to the email
+        /// Adds template to the email
         /// </summary>
-        /// <param name="template">The razor template</param>
+        /// <param name="template">The template</param>
         /// <param name="model">Model for the template</param>
         /// <param name="isHtml">True if Body is HTML, false for plain text (Optional)</param>
         /// <returns>Instance of the Email class</returns>
@@ -417,9 +417,9 @@ namespace FluentEmail.Core
         }
 
         /// <summary>
-        /// Adds razor template to the email
+        /// Adds template to the email
         /// </summary>
-        /// <param name="template">The razor template</param>
+        /// <param name="template">The template</param>
         /// <param name="model">Model for the template</param>
         /// <returns>Instance of the Email class</returns>
         public IFluentEmail PlaintextAlternativeUsingTemplate<T>(string template, T model)
