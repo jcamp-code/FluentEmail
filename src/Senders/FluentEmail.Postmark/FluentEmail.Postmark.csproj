@@ -1,17 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Description>Send emails via Postmark using their REST API</Description>
-	<AssemblyTitle>Fluent Email - Postmark</AssemblyTitle>
-	<PackageTags>$(PackageTags);postmark</PackageTags>
-	<TargetFramework>net6.0</TargetFramework>
-	<PackageId>jcamp.$(AssemblyName)</PackageId>
-	<Product>jcamp.$(AssemblyName)</Product>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Description>Send emails via Postmark using their REST API</Description>
+        <AssemblyTitle>Fluent Email - Postmark</AssemblyTitle>
+        <PackageTags>$(PackageTags);postmark</PackageTags>
+        <TargetFramework>net6.0</TargetFramework>
+        <PackageId>jcamp.$(AssemblyName)</PackageId>
+        <Product>jcamp.$(AssemblyName)</Product>
+    </PropertyGroup>
 
-  <ItemGroup>
-	<ProjectReference Include="..\..\FluentEmail.Core\FluentEmail.Core.csproj" />
-	<PackageReference Include="Postmark" Version="4.7.7" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\FluentEmail.Core\FluentEmail.Core.csproj"/>
+        <PackageReference Include="Postmark" Version="4.7.10"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
 </Project>

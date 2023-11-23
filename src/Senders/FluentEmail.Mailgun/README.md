@@ -1,10 +1,10 @@
-﻿# Fluent Email - MailGun  
+﻿![fluent email logo](https://raw.githubusercontent.com/lukencode/FluentEmail/master/assets/fluentemail_logo_64x64.png "FluentEmail")
+
+# FluentEmail - All in one email sender for .NET and .NET Core
+
+## Mailgun Email Sender for [FluentEmail](https://github.com/jcamp-code/FluentEmail)
 
 Send email via the MailGun REST API.
-
-## Packages
-
-`FluentEmail.Mailgun`
 
 ## Usage
 
@@ -36,5 +36,3 @@ Send the email in the usual Fluent Email way.
 ## Further Information
 
 Don't forget you can use Razor templating using the [FluentEmail.Razor](../../Renderers/FluentEmail.Razor) package as well.
-
-If you'd like to create your own sender for another service, check out the source code. All you need to do is implement the `ISender` interface :)

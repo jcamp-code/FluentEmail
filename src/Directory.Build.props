@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/jcamp-code/FluentEmail</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jcamp-code/FluentEmail</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>3.5.1</Version>
 
