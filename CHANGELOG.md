@@ -4,7 +4,7 @@
 
 ### 🚀 Enhancements
 
-  - Update to latest Azure Email Client ([aa3a419](https://github.com/jcamp-code/FluentEmail/commit/aa3a419))
+  - Update to latest Azure Email Client ([aa3a419](https://github.com/jcamp-code/FluentEmail/commit/aa3a419)) - thanks [@TheObliterator](https://github.com/TheObliterator)
   - Add UnDotNet.BootstrapEmail processing ([05cfca2](https://github.com/jcamp-code/FluentEmail/commit/05cfca2))
 
 ### 🏡 Chore
