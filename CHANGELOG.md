@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.6.0
+
+### 🚀 Enhancements
+
+  - Update to latest Azure Email Client ([aa3a419](https://github.com/jcamp-code/FluentEmail/commit/aa3a419))
+  - Add UnDotNet.BootstrapEmail processing ([05cfca2](https://github.com/jcamp-code/FluentEmail/commit/05cfca2))
+
+### 🏡 Chore
+
+  - Added README to all packages ([8801ddd](https://github.com/jcamp-code/FluentEmail/commit/8801ddd))
+
 ## v3.5.1
 
 - Use GetCallingAssembly() rather than GetExecutingAssemby() in LiquidRenderer builder extensions
