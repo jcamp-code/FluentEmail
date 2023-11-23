@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Renderers\FluentEmail.Bootstrap\FluentEmail.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\src\Renderers\FluentEmail.Liquid\FluentEmail.Liquid.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.13" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="6.0.0" />
+    <PackageReference Update="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+  </ItemGroup>
+
+</Project>

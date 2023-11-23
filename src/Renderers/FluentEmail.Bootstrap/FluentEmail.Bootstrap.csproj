@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Process the FluentEmail templates through UnDotNet.BootstrapEmail. Allows for simpler templates.</Description>
+    <AssemblyTitle>Fluent Email - Bootstrap</AssemblyTitle>
+    <Authors>John Campion</Authors>
+    <PackageTags>$(PackageTags);bootstrap</PackageTags>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssetsDirectory>../../../assets</AssetsDirectory>
+    <NoWarn>NU5104</NoWarn>
+    <Nullable>enable</Nullable>
+    <PackageId>jcamp.$(AssemblyName)</PackageId>
+    <Product>jcamp.$(AssemblyName)</Product>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\FluentEmail.Core\FluentEmail.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="UnDotNet.BootstrapEmail" Version="1.0.0" />
+    <PackageReference Include="Verify.NUnit" Version="22.5.0" />
+  </ItemGroup>
+
+</Project>

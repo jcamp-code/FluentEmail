@@ -1,4 +1,4 @@
-![alt text](https://github.com/lukencode/FluentEmail/raw/master/assets/fluentemail_logo_64x64.png "FluentEmail")
+![alt text](https://raw.githubusercontent.com/lukencode/FluentEmail/master/assets/fluentemail_logo_64x64.png "FluentEmail")
 
 # FluentEmail - All in one email sender for .NET and .NET Core
 
@@ -23,6 +23,7 @@ Original blog post here for a detailed guide [A complete guide to send email in 
 
 - [FluentEmail.Razor](src/Renderers/FluentEmail.Razor) - Generate emails using Razor templates. Anything you can do in ASP.NET is possible here. Uses the [RazorLight](https://github.com/toddams/RazorLight) project under the hood.
 - [FluentEmail.Liquid](src/Renderers/FluentEmail.Liquid) - Generate emails using [Liquid templates](https://shopify.github.io/liquid/). Uses the [Fluid](https://github.com/sebastienros/fluid) project under the hood.
+- [FluentEmail.Bootstrap](src/Renderers/FluentEmail.Bootstrap) - Processes email templates after rendering through [UnDotNet.BootstrapEmail](https://github.com/UnDotNet/BootstrapEmail) to allow simpler templates to generate perfect emails.
 
 ### Mail Provider Integrations
 
