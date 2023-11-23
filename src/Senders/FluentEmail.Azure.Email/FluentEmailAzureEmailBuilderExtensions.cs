@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this FluentEmailServicesBuilder builder,
             string connectionString)
         {
-            builder.Services.TryAdd(ServiceDescriptor.Scoped<ISender>(_ => new AzureEmailSender(connectionString)));
+            builder.Services.TryAdd(ServiceDescriptor.Singleton((IServiceProvider x) => (ISender)(object)new AzureEmailSender(connectionString)));
             return builder;
         }
         
@@ -23,7 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
             string connectionString,
             EmailClientOptions options)
         {
-            builder.Services.TryAdd(ServiceDescriptor.Scoped<ISender>(_ => new AzureEmailSender(connectionString, options)));
+            builder.Services.TryAdd(ServiceDescriptor.Singleton((IServiceProvider x) => (ISender)(object)new AzureEmailSender(connectionString, options)));
             return builder;
         }
         
@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
             AzureKeyCredential keyCredential,
             EmailClientOptions options = default)
         {
-            builder.Services.TryAdd(ServiceDescriptor.Scoped<ISender>(_ => new AzureEmailSender(endpoint, keyCredential, options)));
+            builder.Services.TryAdd(ServiceDescriptor.Singleton((IServiceProvider x) => (ISender)(object)new AzureEmailSender(endpoint, keyCredential, options)));
             return builder;
         }
         
@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
             TokenCredential tokenCredential,
             EmailClientOptions options = default)
         {
-            builder.Services.TryAdd(ServiceDescriptor.Scoped<ISender>(_ => new AzureEmailSender(endpoint, tokenCredential, options)));
+            builder.Services.TryAdd(ServiceDescriptor.Singleton((IServiceProvider x) => (ISender)(object)new AzureEmailSender(endpoint, tokenCredential, options)));
             return builder;
         }
     }

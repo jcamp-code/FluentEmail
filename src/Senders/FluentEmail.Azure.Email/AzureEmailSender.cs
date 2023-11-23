@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Communication.Email;
-using Azure.Communication.Email.Models;
 using Azure.Core;
 using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
@@ -19,6 +17,13 @@ namespace FluentEmail.Azure.Email;
 public class AzureEmailSender : ISender
 {
     private EmailClient _emailClient;
+
+    /// <summary>
+    /// The priority header to use when specifying the importance of an email.
+    /// Values: 1-High, 3-Normal (default), 5-Low
+    /// https://sendgrid.com/blog/magic-email-headers/
+    /// </summary>
+    const string PriorityHeader = "X-Priority";
 
     /// <summary>
     /// Initializes a new instance of <see cref="AzureEmailSender"/>
@@ -96,8 +101,10 @@ public class AzureEmailSender : ISender
         
         var emailRecipients = new EmailRecipients(toRecipients, ccRecipients, bccRecipients);
 
-        var sender = $"{email.Data.FromAddress.Name} <{email.Data.FromAddress.EmailAddress}>";
-        var emailMessage = new EmailMessage(sender, emailContent, emailRecipients);
+        // Azure Email Sender doesn't allow us to specify the 'from' display name (instead the sender name is defined in the blade configuration)
+        // var sender = $"{email.Data.FromAddress.Name} <{email.Data.FromAddress.EmailAddress}>";
+        var sender = email.Data.FromAddress.EmailAddress;
+        var emailMessage = new EmailMessage(sender, emailRecipients, emailContent);
         
         if (email.Data.ReplyToAddresses.Any(a => !string.IsNullOrWhiteSpace(a.EmailAddress)))
         {
@@ -111,7 +118,7 @@ public class AzureEmailSender : ISender
         {
             foreach (var header in email.Data.Headers)
             {
-                emailMessage.CustomHeaders.Add(new EmailCustomHeader(header.Key, header.Value));
+                emailMessage.Headers.Add(header.Key, header.Value);
             }
         }
 
@@ -123,19 +130,19 @@ public class AzureEmailSender : ISender
             }
         }
 
-        emailMessage.Importance = email.Data.Priority switch
+        emailMessage.Headers.Add(PriorityHeader, (email.Data.Priority switch
         {
-            Priority.High => EmailImportance.High,
-            Priority.Normal => EmailImportance.Normal,
-            Priority.Low => EmailImportance.Low,
-            _ => EmailImportance.Normal
-        };
+            Priority.High => 1,
+            Priority.Normal => 3,
+            Priority.Low => 5,
+            _ => 3
+        }).ToString());
+
 
         try
         {
-            var sendEmailResult = (await _emailClient.SendAsync(emailMessage, token ?? CancellationToken.None)).Value;
-            
-            var messageId = sendEmailResult.MessageId;
+            EmailSendOperation sendOperation = await _emailClient.SendAsync(WaitUntil.Started, emailMessage, token ?? CancellationToken.None);
+            var messageId = sendOperation.Id;
             if (string.IsNullOrWhiteSpace(messageId))
             {
                 return new SendResponse
@@ -147,32 +154,21 @@ public class AzureEmailSender : ISender
             // We want to verify that the email was sent.
             // The maximum time we will wait for the message status to be sent/delivered is 2 minutes.
             var cancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(2));
-            SendStatusResult sendStatusResult;
-            do
-            {
-                sendStatusResult = await _emailClient.GetSendStatusAsync(messageId, cancellationToken.Token);
-                
-                if (sendStatusResult.Status != SendStatus.Queued)
-                {
-                    break;
-                }
+            var sendStatusResult = sendOperation.WaitForCompletion(cancellationToken.Token).Value;
 
-                await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken.Token);
-            } while (!cancellationToken.IsCancellationRequested);
+            if (sendStatusResult.Status == EmailSendStatus.Succeeded)
+            {
+                return new SendResponse
+                {
+                    MessageId = messageId
+                };
+            }
 
             if (cancellationToken.IsCancellationRequested)
             {
                 return new SendResponse
                 {
                     ErrorMessages = new List<string> { "Failed to send email, timed out while getting status." }
-                };
-            }
-
-            if (sendStatusResult.Status == SendStatus.OutForDelivery)
-            {
-                return new SendResponse
-                {
-                    MessageId = messageId
                 };
             }
             
@@ -189,17 +185,7 @@ public class AzureEmailSender : ISender
             };
         }
     }
-    
-    private async Task<EmailAttachment> ConvertAttachment(Attachment attachment) =>
-        new(attachment.Filename, attachment.ContentType,
-            await GetAttachmentAsBase64String(attachment.Data));
 
-    private async Task<string> GetAttachmentAsBase64String(Stream stream)
-    {
-        using var ms = new MemoryStream();
-        
-        await stream.CopyToAsync(ms);
-        
-        return Convert.ToBase64String(ms.ToArray());
-    }
+    private async Task<EmailAttachment> ConvertAttachment(Attachment attachment) =>
+        new(attachment.Filename, attachment.ContentType, await BinaryData.FromStreamAsync(attachment.Data));
 }
