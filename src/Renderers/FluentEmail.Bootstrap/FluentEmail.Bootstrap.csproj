@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UnDotNet.BootstrapEmail" Version="1.0.0" />
+    <PackageReference Include="UnDotNet.BootstrapEmail" Version="1.*" />
     <PackageReference Include="Verify.NUnit" Version="22.5.0" />
   </ItemGroup>
 
