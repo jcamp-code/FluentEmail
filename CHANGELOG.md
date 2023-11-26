@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.6.1
+
+### 🩹 Fixes
+
+  - Use latest UnDotNet.BootstrapEmail ([f0fd690](https://github.com/jcamp-code/FluentEmail/commit/f0fd690))
+
 ## v3.6.0
 
 ### 🚀 Enhancements

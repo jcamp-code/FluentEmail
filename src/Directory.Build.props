@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.6.0</Version>
+    <Version>3.6.1</Version>
 
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
