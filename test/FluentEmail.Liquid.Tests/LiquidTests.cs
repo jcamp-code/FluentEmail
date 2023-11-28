@@ -1,9 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+
 using FluentEmail.Core;
 
 using Fluid;
+using Fluid.Ast;
 
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -27,12 +31,14 @@ namespace FluentEmail.Liquid.Tests
 
         private static void SetupRenderer(
             IFileProvider fileProvider = null,
-            Action<TemplateContext, object> configureTemplateContext = null)
+            Action<TemplateContext, object> configureTemplateContext = null,
+            Action<LiquidParser> configureParser = null)
         {
             var options = new LiquidRendererOptions
             {
                 FileProvider = fileProvider,
                 ConfigureTemplateContext = configureTemplateContext,
+                ConfigureParser = configureParser
             };
             Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
         }
@@ -179,6 +185,32 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
                 .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
             Assert.AreEqual($"<h2>Hello!</h2>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>", email.Data.Body);
+        }
+
+        [Test]
+        public void Should_be_able_to_configure_parser()
+        {
+            SetupRenderer(
+                new EmbeddedFileProvider(typeof(LiquidTests).Assembly, "FluentEmail.Liquid.Tests.EmailTemplates"),
+                configureParser: parser => parser.RegisterExpressionTag("testTag", TestTag)
+            );
+
+            const string template = "sup {{ Name }} here is a custom tag: {% testTag 'test' %}";
+
+            var email = Email
+                .From(FromEmail)
+                .To(ToEmail)
+                .Subject(Subject)
+                .UsingTemplate(template, new ViewModel { Name = "LUKE" });
+
+            Assert.AreEqual("sup LUKE here is a custom tag: Hello from custom tag test", email.Data.Body);
+
+            static async ValueTask<Completion> TestTag(Expression pathExpression, TextWriter writer, TextEncoder encoder, TemplateContext context)
+            {
+                var tagParameterValue = await pathExpression.EvaluateAsync(context);
+                await writer.WriteAsync($"Hello from custom tag {tagParameterValue.ToStringValue()}");
+                return Completion.Normal;
+            }
         }
 
         private class ViewModel

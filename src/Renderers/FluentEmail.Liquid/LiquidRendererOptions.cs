@@ -30,5 +30,10 @@ namespace FluentEmail.Liquid
         /// Set custom Template Options for Fluid 
         /// </summary>
         public TemplateOptions TemplateOptions { get; set; } = new TemplateOptions();
+
+        /// <summary>
+        /// Allows configuring parser
+        /// </summary>
+        public Action<LiquidParser>? ConfigureParser { get; set; }
     }
 }

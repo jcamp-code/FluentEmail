@@ -19,6 +19,7 @@ namespace FluentEmail.Liquid
         {
             _options = options;
             _parser = new LiquidParser();
+            _options.Value.ConfigureParser?.Invoke(_parser);
         }
 
         public string Parse<T>(string template, T model, bool isHtml = true)
