@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.7.0
+
+### 🚀 Enhancements
+
+  - Allow configuring Liquid parser ([#18](https://github.com/jcamp-code/FluentEmail/pull/18))
+
+### ❤️  Contributors
+
+- Ville Häkli <ville.hakli@iki.fi>
+
 ## v3.6.1
 
 ### 🩹 Fixes
