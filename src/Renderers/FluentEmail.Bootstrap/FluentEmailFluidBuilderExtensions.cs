@@ -38,7 +38,7 @@ public static class FluentEmailBootstrap
     public static IFluentEmail UsingBootstrapBody(this IFluentEmail email, string body, bool isHtml = true)
     {
         email.Body(body, isHtml);
-        email.CompileBootstrap(!isHtml);
+        email.CompileBootstrap(isHtml);
         return email;
     }
 
@@ -55,7 +55,7 @@ public static class FluentEmailBootstrap
         bool isHtml = true)
     {
         email.UsingTemplate(template, model, isHtml);
-        email.CompileBootstrap(!isHtml);
+        email.CompileBootstrap(isHtml);
         return email;
     }
 
@@ -73,7 +73,7 @@ public static class FluentEmailBootstrap
         Assembly assembly, bool isHtml = true)
     {
         email.UsingTemplateFromEmbedded(path, model, assembly, isHtml);
-        email.CompileBootstrap(!isHtml);
+        email.CompileBootstrap(isHtml);
         return email;
     }
 
@@ -90,7 +90,7 @@ public static class FluentEmailBootstrap
         bool isHtml = true)
     {
         email.UsingTemplateFromEmbedded(path, model, isHtml);
-        email.CompileBootstrap(!isHtml);
+        email.CompileBootstrap(isHtml);
         return email;
     }
 
@@ -107,7 +107,7 @@ public static class FluentEmailBootstrap
         bool isHtml = true)
     {
         email.UsingTemplateFromFile(filename, model, isHtml);
-        email.CompileBootstrap(!isHtml);
+        email.CompileBootstrap(isHtml);
         return email;
     }
 
@@ -125,7 +125,7 @@ public static class FluentEmailBootstrap
         T model, CultureInfo culture, bool isHtml = true)
     {
         email.UsingCultureTemplateFromFile(filename, model, culture, isHtml);
-        email.CompileBootstrap(!isHtml);
+        email.CompileBootstrap(isHtml);
         return email;
     }
 }
