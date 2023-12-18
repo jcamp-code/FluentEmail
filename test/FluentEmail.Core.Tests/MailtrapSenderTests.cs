@@ -8,17 +8,17 @@ namespace FluentEmail.Mailtrap.Tests
 {
     public class MailtrapSenderTests
     {
-        const string toEmail = "testto.fluentemail@mailinator.com";
-        const string fromEmail = "testfrom.fluentemail@mailinator.com";
+        const string toEmail = "neo.js.cn@gmail.com";
+        const string fromEmail = "mailtrap@blazorserver.com";
         const string subject = "Mailtrap Email Test";
         const string body = "This email is testing the functionality of mailtrap.";
         const string username = ""; // Mailtrap SMTP inbox username
         const string password = ""; // Mailtrap SMTP inbox password
-
+        const string templateid = "";
         [SetUp]
         public void SetUp()
         {
-            var sender = new MailtrapSender(username, password);
+            var sender = new MailtrapSender(username, password, "send.api.mailtrap.io", 587);
             Email.DefaultSender = sender;
         }
 
@@ -104,6 +104,14 @@ namespace FluentEmail.Mailtrap.Tests
 
                 Assert.IsTrue(response.Successful);
             }
+        }
+
+        [Test, Ignore("Missing credentials")]
+        public async Task CanSendEmailWithTemplate()
+        {
+            var email = Email.From(fromEmail).To(toEmail);
+            var response = await email.SendWithTemplateAsync(templateid, new { var1 = "Test", var2 = "VVVVVVVVVVVVV" });
+            Assert.IsTrue(response.Successful);
         }
     }
 }
