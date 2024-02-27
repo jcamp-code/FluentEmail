@@ -34,7 +34,7 @@ Original blog post here for a detailed guide [A complete guide to send email in 
 - [FluentEmail.Mailtrap](src/Senders/FluentEmail.Mailtrap) - Send emails to Mailtrap. Uses [FluentEmail.Smtp](src/Senders/FluentEmail.Smtp) for delivery.
 - [FluentEmail.MailKit](src/Senders/FluentEmail.MailKit) - Send emails using the [MailKit](https://github.com/jstedfast/MailKit) email library.
 - [FluentEmail.MailPace](src/Senders/FluentEmail.MailPace) - Send emails via the [MailPace](https://www.mailpace.com/) REST API.
-- [FluentEmail.MailerSend](https://github.com/marcoatribeiro/FluentEmail.MailerSend) - Send email via [MailerSend](https://www.mailersend.com/)'s API.
+- [FluentEmail.MailerSend](https://github.com/marcoatribeiro/FluentEmail.MailerSend.jcamp) - Send email via [MailerSend](https://www.mailersend.com/)'s API.
 
 ## Basic Usage
 
