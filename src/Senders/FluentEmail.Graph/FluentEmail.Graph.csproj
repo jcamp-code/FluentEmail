@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Graph" Version="4.52.0" />
     <PackageReference Include="Microsoft.Graph.Auth" Version="1.0.0-preview.5" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.49.1" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.1" />
   </ItemGroup>
 
   <ItemGroup>
