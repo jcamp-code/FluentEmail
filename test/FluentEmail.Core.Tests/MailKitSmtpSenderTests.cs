@@ -93,7 +93,6 @@ namespace FluentEmail.MailKit.Tests
         }
 
         [Test]
-        [TestCase]
         [TestCase("logotest.png")]
         public async Task CanSendEmailWithInlineImages(string contentId = null)
         {
