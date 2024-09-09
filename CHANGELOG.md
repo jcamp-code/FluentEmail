@@ -1,5 +1,34 @@
 # Changelog
 
+## v3.8.0
+
+[compare changes](https://github.com/jcamp-code/FluentEmail/compare/v3.7.0...v3.8.0)
+
+### 🚀 Enhancements
+
+- Update Mailkit to 4.7 and upgrade vulnerable components
+- Mailtrap support send with template method
+
+### 🩹 Fixes
+- Update Mailkit to 4.7 and upgrade vulnerable components
+- Bind MailgunSender to ISender in singleton scope
+- Plaintext parameter to always include plaintext ([4a38382](https://github.com/jcamp-code/FluentEmail/commit/4a38382))
+- Remove prerelease from azure sender ([90cac43](https://github.com/jcamp-code/FluentEmail/commit/90cac43))
+- Email.AttachFromFilename does not dispose stream ([87441ae](https://github.com/jcamp-code/FluentEmail/commit/87441ae))
+
+### 🏡 Chore
+- Updated FluentEmail.MailerSend package reference in Readme
+- Tidy code ([8a24d6d](https://github.com/jcamp-code/FluentEmail/commit/8a24d6d))
+
+### ❤️ Contributors
+
+- [neo.zhu](https://github.com/neozhu) 
+- [Aaron Sherber](https://github.com/asherber)
+- [Mark Menchavez](https://github.com/MarkMenchavez)
+- [marcoatribeiro](https://github.com/marcoatribeiro)
+- [brnn8r](https://github.com/brnn8r)
+- 
+
 ## v3.7.0
 
 ### 🚀 Enhancements
@@ -8,7 +37,7 @@
 
 ### ❤️  Contributors
 
-- Ville Häkli <ville.hakli@iki.fi>
+- [Ville Häkli](https://github.com/VilleHakli) 
 
 ## v3.6.1
 
