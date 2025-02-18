@@ -68,7 +68,7 @@ public class AzureEmailSender : ISender
     public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
     {
         var emailContent = new EmailContent(email.Data.Subject);
-
+        
         if (email.Data.IsHtml)
         {
             emailContent.Html = email.Data.Body;
@@ -79,33 +79,33 @@ public class AzureEmailSender : ISender
         }
 
         var toRecipients = new List<EmailAddress>();
-
-        if (email.Data.ToAddresses.Any())
+        
+        if(email.Data.ToAddresses.Any())
         {
             email.Data.ToAddresses.ForEach(r => toRecipients.Add(new EmailAddress(r.EmailAddress, r.Name)));
         }
 
         var ccRecipients = new List<EmailAddress>();
-
-        if (email.Data.CcAddresses.Any())
+        
+        if(email.Data.CcAddresses.Any())
         {
             email.Data.CcAddresses.ForEach(r => ccRecipients.Add(new EmailAddress(r.EmailAddress, r.Name)));
         }
-
+        
         var bccRecipients = new List<EmailAddress>();
-
-        if (email.Data.BccAddresses.Any())
+        
+        if(email.Data.BccAddresses.Any())
         {
             email.Data.BccAddresses.ForEach(r => bccRecipients.Add(new EmailAddress(r.EmailAddress, r.Name)));
         }
-
+        
         var emailRecipients = new EmailRecipients(toRecipients, ccRecipients, bccRecipients);
 
         // Azure Email Sender doesn't allow us to specify the 'from' display name (instead the sender name is defined in the blade configuration)
         // var sender = $"{email.Data.FromAddress.Name} <{email.Data.FromAddress.EmailAddress}>";
         var sender = email.Data.FromAddress.EmailAddress;
         var emailMessage = new EmailMessage(sender, emailRecipients, emailContent);
-
+        
         if (email.Data.ReplyToAddresses.Any(a => !string.IsNullOrWhiteSpace(a.EmailAddress)))
         {
             foreach (var emailAddress in email.Data.ReplyToAddresses)
@@ -113,7 +113,7 @@ public class AzureEmailSender : ISender
                 emailMessage.ReplyTo.Add(new EmailAddress(emailAddress.EmailAddress, emailAddress.Name));
             }
         }
-
+        
         if (email.Data.Headers.Any())
         {
             foreach (var header in email.Data.Headers)
@@ -122,7 +122,7 @@ public class AzureEmailSender : ISender
             }
         }
 
-        if (email.Data.Attachments.Any())
+        if(email.Data.Attachments.Any())
         {
             foreach (var attachment in email.Data.Attachments)
             {
@@ -151,13 +151,13 @@ public class AzureEmailSender : ISender
                     ErrorMessages = new List<string> { "Failed to send email." }
                 };
             }
-
+            
             // We want to verify that the email was sent.
             // The maximum time we will wait for the message status to be sent/delivered is 2 minutes.
             using var cancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(2));
-            var sendStatusResult = sendOperation.WaitForCompletion(cancellationToken.Token).Value;
+            var sendStatusResult = await sendOperation.WaitForCompletionAsync(cancellationToken.Token);
 
-            if (sendStatusResult.Status == EmailSendStatus.Succeeded)
+            if (sendStatusResult.Value.Status == EmailSendStatus.Succeeded)
             {
                 return new SendResponse
                 {
@@ -173,7 +173,7 @@ public class AzureEmailSender : ISender
                     ErrorMessages = new List<string> { "Failed to send email, timed out while getting status." }
                 };
             }
-
+            
             return new SendResponse
             {
                 MessageId = messageId,
