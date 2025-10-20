@@ -12,7 +12,7 @@ using Fluid.Ast;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-using TUnit.Core;
+using Xunit;
 using AwesomeAssertions;
 using FluentEmail.Core.Interfaces;
 
@@ -38,7 +38,7 @@ namespace FluentEmail.Liquid.Tests
             return new LiquidRenderer(Options.Create(options));
         }
 
-        [Test]
+        [Fact]
         public void Model_With_List_Template_Matches()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -53,7 +53,7 @@ namespace FluentEmail.Liquid.Tests
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
 
-        [Test]
+        [Fact]
         public void Custom_Context_Values()
         {
             var renderer = SetupRenderer(new NullFileProvider(), (context, model) =>
@@ -75,7 +75,7 @@ namespace FluentEmail.Liquid.Tests
         }
 
         // currently not cached as Fluid is so fast, but can be added later
-        [Test]
+        [Fact]
         public void Reuse_Cached_Templates()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -103,7 +103,7 @@ namespace FluentEmail.Liquid.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void New_Model_Template_Matches()
         {
             const string template = "sup {{ Name }}";
@@ -117,7 +117,7 @@ namespace FluentEmail.Liquid.Tests
             email.Data.Body.Should().Be("sup LUKE");
         }
 
-        [Test]
+        [Fact]
         public void New_Model_With_List_Template_Matches()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -132,7 +132,7 @@ namespace FluentEmail.Liquid.Tests
         }
 
         // currently not cached as Fluid is so fast, but can be added later
-        [Test]
+        [Fact]
         public void New_Reuse_Cached_Templates()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -158,10 +158,10 @@ namespace FluentEmail.Liquid.Tests
             }
         }
 
-	    [Test]
+	    [Fact]
 	    public void Should_be_able_to_use_project_layout()
 	    {
-            var renderer = SetupRenderer(new PhysicalFileProvider(Path.Combine(new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory!.FullName, "EmailTemplates")));
+            var renderer = SetupRenderer(new PhysicalFileProvider(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory!.FullName, "EmailTemplates")));
 
 		    const string template = @"{% layout '_layout.liquid' %}
 sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -175,7 +175,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
 		    email.Data.Body.Should().Be($"<h1>Hello!</h1>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
 	    }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_use_embedded_layout()
         {
             var renderer = SetupRenderer(new EmbeddedFileProvider(typeof(LiquidTests).Assembly, "FluentEmail.Liquid.Tests.EmailTemplates"));
@@ -193,7 +193,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
             email.Data.Body.Should().Be($"<h2>Hello!</h2>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_configure_parser()
         {
             var renderer = SetupRenderer(

@@ -1,5 +1,10 @@
 using System.IO;
+using System.Threading.Tasks;
+using AwesomeAssertions;
 using FluentEmail.Azure.Email;
+using FluentEmail.Core.Interfaces;
+using Xunit;
+using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -19,10 +24,10 @@ public class AzureEmailSenderTests
         if (!string.IsNullOrEmpty(_connectionString)) Sender = new AzureEmailSender(_connectionString);
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_connectionString), "No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of Azure Email Sender.";
@@ -36,13 +41,13 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithReplyTo()
     {
-        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_connectionString), "No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail with ReplyTo functionality of Azure Email Sender.";
@@ -57,13 +62,13 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_connectionString), "No Azure Credentials");
         
         const string subject = "SendMail With Attachments Test";
         const string body = "This email is testing the attachment functionality of Azure Email Sender.";
@@ -87,13 +92,13 @@ public class AzureEmailSenderTests
         
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendHighPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_connectionString), "No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of Azure Email Sender.";
@@ -108,13 +113,13 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendLowPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_connectionString), "No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of Azure Email Sender.";
@@ -129,6 +134,6 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 }

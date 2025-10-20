@@ -1,5 +1,10 @@
-using System.IO;
+using AwesomeAssertions;
+using FluentEmail.Core.Interfaces;
+using FluentEmail.Core.Models;
 using FluentEmail.Mailtrap;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -16,19 +21,19 @@ public class MailtrapSenderTests
     private readonly string _password = Credentials.MailTrap.Password;
     private readonly string _apiHost = Credentials.MailTrap.ApiHost;
     private readonly string _apiKey = Credentials.MailTrap.ApiKey;
-    private readonly string _templateId = Credentials.MailTrap.Template;
+    private readonly string _templateid = Credentials.MailTrap.Template;
 
-    private ISender Sender { get; }
+    private ISender Sender { get; set; }
 
     public MailtrapSenderTests()
     {
         if (!string.IsNullOrEmpty(_username)) Sender = new MailtrapSender(_username, _password, _host, _port);
     }
 
-    [Test]
+    [Fact]
     public void CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -39,14 +44,14 @@ public class MailtrapSenderTests
         email.Sender = Sender;
         var response = email.Send();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailAsync()
     {
-        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -57,18 +62,18 @@ public class MailtrapSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        await sw.WriteLineAsync("Hey this is some text in an attachment");
-        await sw.FlushAsync();
+        sw.WriteLine("Hey this is some text in an attachment");
+        sw.Flush();
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -88,48 +93,49 @@ public class MailtrapSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithInlineImages()
     {
-        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
-
-        await using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
+        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
         
-        var attachment = new Attachment
+        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
         {
-            IsInline = true,
-            Data = stream,
-            ContentType = "image/png",
-            Filename = "logotest.png"
-        };
+            var attachment = new Attachment
+            {
+                IsInline = true,
+                Data = stream,
+                ContentType = "image/png",
+                Filename = "logotest.png"
+            };
 
-        var email = Email
-            .From(_fromEmail)
-            .To(_toEmail)
-            .Subject(Subject)
-            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                  "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-            .Attach(attachment);
+            var email = Email
+                .From(_fromEmail)
+                .To(_toEmail)
+                .Subject(Subject)
+                .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+                .Attach(attachment);
 
-        email.Sender = Sender;
-        var response = await email.SendAsync();
+            email.Sender = Sender;
+            var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+            (response.Successful).Should().BeTrue();
+        }
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithTemplate()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailtrap Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailtrap Credentials");
         
         var email = Email.From(_fromEmail).To(_toEmail);
         email.Sender = new MailtrapSender(_username, _apiKey, _host, 587, _apiHost);
 
-        var response = await email.SendWithTemplateAsync(_templateId, new { var1 = "Test", var2 = "VVVVVVVVVVVVV" });
+        var response = await email.SendWithTemplateAsync(_templateid, new { var1 = "Test", var2 = "VVVVVVVVVVVVV" });
         
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 }

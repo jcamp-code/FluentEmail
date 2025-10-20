@@ -1,6 +1,11 @@
-using System.IO;
+using AwesomeAssertions;
+using FluentEmail.Core.Interfaces;
+using FluentEmail.Core.Models;
 using FluentEmail.Mailgun;
 using Newtonsoft.Json;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -13,17 +18,17 @@ public class MailgunSenderTests
     private const string Subject = "Attachment Tests";
     private const string Body = "This email is testing the attachment functionality of MailGun.";
 
-    private ISender Sender { get; }
+    private ISender Sender { get; set; }
 
     public MailgunSenderTests()
     {
         if (!string.IsNullOrEmpty(_apiKey)) Sender = new MailgunSender(_domain, _apiKey);
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -34,13 +39,13 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task GetMessageIdInResponse()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -51,14 +56,14 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
-        response.MessageId.Should().NotBeEmpty();
+        (response.Successful).Should().BeTrue();
+        (response.MessageId).Should().NotBeEmpty();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithTag()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -70,13 +75,13 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithVariables()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -88,18 +93,18 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        await sw.WriteLineAsync("Hey this is some text in an attachment");
-        await sw.FlushAsync();
+        sw.WriteLine("Hey this is some text in an attachment");
+        sw.Flush();
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -119,42 +124,44 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithInlineImages()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
-
-        await using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
-        var attachment = new Attachment
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
+        
+        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
         {
-            IsInline = true,
-            Data = stream,
-            ContentType = "image/png",
-            Filename = "logotest.png"
-        };
+            var attachment = new Attachment
+            {
+                IsInline = true,
+                Data = stream,
+                ContentType = "image/png",
+                Filename = "logotest.png"
+            };
 
-        var email = Email
-            .From(_fromEmail)
-            .To(_toEmail)
-            .Subject(Subject)
-            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                  "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-            .Attach(attachment);
+            var email = Email
+                .From(_fromEmail)
+                .To(_toEmail)
+                .Subject(Subject)
+                .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+                .Attach(attachment);
 
-        email.Sender = Sender;
-        var response = await email.SendAsync();
+            email.Sender = Sender;
+            var response = await email.SendAsync();
 
-        response.Successful.Should().BeTrue();
+            (response.Successful).Should().BeTrue();
+        }
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithTemplate()
     {
-        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
-        if (string.IsNullOrEmpty(Credentials.Mailgun.Template)) Skip.Test("No Mailgun Template");
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
+        Assert.SkipWhen(string.IsNullOrEmpty(Credentials.Mailgun.Template), "No Mailgun Template");
 
         var email = Email
             .From(_fromEmail)
@@ -164,7 +171,7 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendWithTemplateAsync("test-template", new { var1 = "Test" });
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
     private class Variable

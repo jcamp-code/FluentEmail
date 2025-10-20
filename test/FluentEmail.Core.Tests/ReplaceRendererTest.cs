@@ -1,10 +1,14 @@
 ﻿using FluentEmail.Core.Defaults;
+using FluentEmail.Core.Interfaces;
+using FluentEmail.Core.Models;
+using Xunit;
+using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
 
 public class ReplaceRendererTest
 {
-    [Test]
+    [Fact]
     public void ModelPropertyValueIsNull_Test()
     {
         ITemplateRenderer templateRenderer = new ReplaceRenderer();

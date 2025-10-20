@@ -9,8 +9,9 @@ using FluentEmail.Liquid;
 using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using Xunit;
 using VerifyTests;
-using VerifyTUnit;
+using VerifyXunit;
 
 namespace FluentEmail.Bootstrap.Tests;
 
@@ -39,7 +40,7 @@ public class BootstrapTests
         return new LiquidRenderer(Options.Create(options));
     }
 
-    [Test]
+    [Fact]
     public Task CompileBootstrap_Compiles()
     {
         var template = """
@@ -61,7 +62,7 @@ public class BootstrapTests
         return Verifier.Verify(email.Data.Body, _settings);
     }
 
-    [Test]
+    [Fact]
     public Task UsingBootstrapBody_Compiles()
     {
         var body = """
@@ -83,7 +84,7 @@ public class BootstrapTests
     }
 
 
-    [Test]
+    [Fact]
     public Task UsingBootstrapTemplate_Compiles()
     {
         var template = """

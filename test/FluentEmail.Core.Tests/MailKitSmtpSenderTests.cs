@@ -1,6 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using AwesomeAssertions;
+using FluentEmail.Core.Interfaces;
 using FluentEmail.MailKitSmtp;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
+using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests;
 
@@ -42,7 +47,7 @@ public class MailKitSmtpSenderTests
         }
     }
 
-    [Test]
+    [Fact]
     public void CanSendEmail()
     {
         var email = Email
@@ -55,19 +60,19 @@ public class MailKitSmtpSenderTests
         var response = email.Send();
 
         var files = Directory.EnumerateFiles(s, "*.eml");
-        response.Successful.Should().BeTrue();
-        files.Should().NotBeEmpty();
+        (response.Successful).Should().BeTrue();
+        (files).Should().NotBeEmpty();
         
         DeleteTemp(s);
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithAttachments()
     {
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        await sw.WriteLineAsync("Hey this is some text in an attachment");
-        await sw.FlushAsync();
+        sw.WriteLine("Hey this is some text in an attachment");
+        sw.Flush();
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -89,50 +94,52 @@ public class MailKitSmtpSenderTests
         var response = await email.SendAsync();
 
         var files = Directory.EnumerateFiles(s, "*.eml");
-        response.Successful.Should().BeTrue();
-        files.Should().NotBeEmpty();
+        (response.Successful).Should().BeTrue();
+        (files).Should().NotBeEmpty();
         
         DeleteTemp(s);
     }
 
-    [Test]
-    [Arguments("logotest.png")]
+    [Theory]
+    [InlineData("logotest.png")]
     public async Task CanSendEmailWithInlineImages(string contentId = null)
     {
-        await using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
-        var attachment = new Attachment
+        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
         {
-            IsInline = true,
-            Data = stream,
-            ContentType = "image/png",
-            Filename = "logotest.png",
-            ContentId = contentId
-        };
+            var attachment = new Attachment
+            {
+                IsInline = true,
+                Data = stream,
+                ContentType = "image/png",
+                Filename = "logotest.png",
+                ContentId = contentId
+            };
 
-        var email = Email
-            .From(FromEmail)
-            .To(ToEmail)
-            .Subject(Subject)
-            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                  "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-            .Attach(attachment);
+            var email = Email
+                .From(FromEmail)
+                .To(ToEmail)
+                .Subject(Subject)
+                .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+                .Attach(attachment);
 
-        email.Sender = GetSender(out var s);
-        var response = await email.SendAsync();
+            email.Sender = GetSender(out var s);
+            var response = await email.SendAsync();
 
-        var files = Directory.EnumerateFiles(s, "*.eml");
-        response.Successful.Should().BeTrue();
-        files.Should().NotBeEmpty();
-        DeleteTemp(s);
+            var files = Directory.EnumerateFiles(s, "*.eml");
+            (response.Successful).Should().BeTrue();
+            (files).Should().NotBeEmpty();
+            DeleteTemp(s);
+        }
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendEmailWithInlineImagesAndAttachmentTogether()
     {
         var attachmentStream = new MemoryStream();
         var sw = new StreamWriter(attachmentStream);
-        await sw.WriteLineAsync("Hey this is some text in an attachment");
-        await sw.FlushAsync();
+        sw.WriteLine("Hey this is some text in an attachment");
+        sw.Flush();
         attachmentStream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -142,7 +149,7 @@ public class MailKitSmtpSenderTests
             Filename = "MailKitAttachment.txt",
         };
 
-        await using var inlineStream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
+        using var inlineStream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
 
         var attachmentInline = new Attachment
         {
@@ -167,13 +174,13 @@ public class MailKitSmtpSenderTests
         var response = await email.SendAsync();
 
         var files = Directory.EnumerateFiles(s, "*.eml");
-        response.Successful.Should().BeTrue();
-        files.Should().NotBeEmpty();
+        (response.Successful).Should().BeTrue();
+        (files).Should().NotBeEmpty();
         
         DeleteTemp(s);
     }
 
-    [Test]
+    [Fact]
     public async Task CanSendAsyncHtmlAndPlaintextTogether()
     {
         var email = Email
@@ -186,10 +193,10 @@ public class MailKitSmtpSenderTests
         var response = await email.SendAsync();
         DeleteTemp(s);
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void CanSendHtmlAndPlaintextTogether()
     {
         var email = Email
@@ -202,6 +209,6 @@ public class MailKitSmtpSenderTests
         var response = email.Send();
         DeleteTemp(s);
 
-        response.Successful.Should().BeTrue();
+        (response.Successful).Should().BeTrue();
     }
 }
