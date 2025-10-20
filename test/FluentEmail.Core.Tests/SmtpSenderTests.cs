@@ -2,12 +2,7 @@
 using System.IO;
 using System.Net.Mail;
 using System.Threading;
-using System.Threading.Tasks;
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
 using FluentEmail.Smtp;
-using Xunit;
-using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests;
 
@@ -53,7 +48,7 @@ public class SmtpSenderTests
     }
 
 
-    [Fact]
+    [Test]
     public void CanSendEmail()
     {
         var email = TestEmail
@@ -64,19 +59,19 @@ public class SmtpSenderTests
         var response = email.Send();
 
         var files = Directory.EnumerateFiles(s, "*.eml");
-        (response.Successful).Should().BeTrue();
-        (files).Should().NotBeEmpty();
+        response.Successful.Should().BeTrue();
+        files.Should().NotBeEmpty();
         DeleteTemp(s);
 
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        sw.WriteLine("Hey this is some text in an attachment");
-        sw.Flush();
+        await sw.WriteLineAsync("Hey this is some text in an attachment");
+        await sw.FlushAsync();
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -93,15 +88,15 @@ public class SmtpSenderTests
 
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
         var files = Directory.EnumerateFiles(s, "*.eml");
-        (files).Should().NotBeEmpty();
+        files.Should().NotBeEmpty();
 
         DeleteTemp(s);
 
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendAsyncHtmlAndPlaintextTogether()
     {
         var email = TestEmail
@@ -114,10 +109,10 @@ public class SmtpSenderTests
 
         DeleteTemp(s);
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CanSendHtmlAndPlaintextTogether()
     {
         var email = TestEmail
@@ -130,11 +125,11 @@ public class SmtpSenderTests
 
         DeleteTemp(s);
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
-    [Fact]
-    public void CancelSendIfCancelationRequested()
+    [Test]
+    public void CancelSendIfCancellationRequested()
     {
         var email = TestEmail;
 
@@ -147,6 +142,6 @@ public class SmtpSenderTests
 
         DeleteTemp(s);
 
-        (response.Successful).Should().BeFalse();
+        response.Successful.Should().BeFalse();
     }
 }

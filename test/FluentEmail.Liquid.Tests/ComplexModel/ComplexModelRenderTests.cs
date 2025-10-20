@@ -6,13 +6,13 @@ using FluentEmail.Core.Interfaces;
 using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using Xunit;
+using TUnit.Core;
 
 namespace FluentEmail.Liquid.Tests.ComplexModel
 {
     public class ComplexModelRenderTests
     {
-        [Fact]
+        [Test]
         public void Can_Render_Complex_Model_Properties()
         {
             var model = new ParentModel

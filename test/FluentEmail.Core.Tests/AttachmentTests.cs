@@ -1,41 +1,34 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Reflection;
-using FluentEmail.Core.Models;
-using Xunit;
-using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
 
 public class AttachmentTests
 {
-    private Assembly ThisAssembly() => this.GetType().GetTypeInfo().Assembly;
     private const string ToEmail = "bob@test.com";
     private const string FromEmail = "johno@test.com";
     private const string Subject = "sup dawg";
 
-    [Fact]
+    [Test]
     public void Attachment_from_stream_Is_set()
     {
-        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}"))
+        using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}");
+        var attachment = new Attachment
         {
-            var attachment = new Attachment
-            {
-                Data = stream,
-                Filename = "Test.txt",
-                ContentType = "text/plain"
-            };
+            Data = stream,
+            Filename = "Test.txt",
+            ContentType = "text/plain"
+        };
 
-            var email = Email.From(FromEmail)
-                .To(ToEmail)
-                .Subject(Subject)
-                .Attach(attachment);
+        var email = Email.From(FromEmail)
+            .To(ToEmail)
+            .Subject(Subject)
+            .Attach(attachment);
 
-            email.Data.Attachments.First().Data.Length.Should().Be(20);
-        }
+        email.Data.Attachments.First().Data.Length.Should().Be(20);
     }
 
-    [Fact]
+    [Test]
     public void Attachment_from_filename_Is_set()
     {
         var email = Email.From(FromEmail)
@@ -46,7 +39,7 @@ public class AttachmentTests
         email.Data.Attachments.First().Data.Length.Should().Be(20);
     }
 
-    [Fact]
+    [Test]
     public void Attachment_from_filename_AttachmentName_Is_set()
     {
         var attachmentName = "attachment.txt";

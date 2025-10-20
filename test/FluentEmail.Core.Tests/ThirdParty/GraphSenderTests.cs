@@ -1,10 +1,4 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
 using FluentEmail.Graph;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -29,10 +23,10 @@ public class GraphSenderTests
         Sender = new GraphSender(_appId, _tenantId, _graphSecret, SaveSent);
     }
 
-    [Fact]
+    [Test]
     public void CanSendEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var email = Email
             .From(_senderEmail)
@@ -42,13 +36,13 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = email.Send();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailAsync()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var email = Email
             .From(_senderEmail)
@@ -58,13 +52,13 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = await email.SendAsync();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
@@ -88,13 +82,13 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = await email.SendAsync();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendHighPriorityEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var email = Email
             .From(_senderEmail)
@@ -105,6 +99,6 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = await email.SendAsync();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 }
