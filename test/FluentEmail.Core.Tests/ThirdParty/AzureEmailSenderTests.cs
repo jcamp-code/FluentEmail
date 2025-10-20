@@ -21,7 +21,7 @@ public class AzureEmailSenderTests
 
     public AzureEmailSenderTests()
     {
-        Sender = new AzureEmailSender(_connectionString);
+        if (!string.IsNullOrEmpty(_connectionString)) Sender = new AzureEmailSender(_connectionString);
     }
 
     [Fact]

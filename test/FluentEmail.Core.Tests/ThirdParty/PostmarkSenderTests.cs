@@ -277,6 +277,7 @@ public class PostmarkSenderTests
     [Fact]
     public void SenderNullServerToken()
     {
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
         Func<PostmarkSender> fn = () => new PostmarkSender((string)null!);
         fn.Should().Throw<ArgumentNullException>();
     }
@@ -284,6 +285,7 @@ public class PostmarkSenderTests
     [Fact]
     public void OptionsNullServerToken()
     {
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
         Func<PostmarkSenderOptions> fn = () => new PostmarkSenderOptions(null!);
         fn.Should().Throw<ArgumentNullException>();
     }
@@ -291,6 +293,7 @@ public class PostmarkSenderTests
     [Fact]
     public void NullOptions()
     {
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
         Func<PostmarkSender> fn = () => new PostmarkSender((PostmarkSenderOptions)null!);
         fn.Should().Throw<ArgumentNullException>();
     }
@@ -298,6 +301,7 @@ public class PostmarkSenderTests
     [Fact]
     public void SendNull()
     {
+        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
         var sender = new PostmarkSender(_apiKey);
         Func<Task> fn = async () => await sender.SendAsync(null!).ConfigureAwait(false);
         fn.Should().ThrowAsync<ArgumentNullException>();
