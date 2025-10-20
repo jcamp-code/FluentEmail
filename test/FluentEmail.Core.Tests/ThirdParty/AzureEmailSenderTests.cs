@@ -1,10 +1,5 @@
 using System.IO;
-using System.Threading.Tasks;
-using AwesomeAssertions;
 using FluentEmail.Azure.Email;
-using FluentEmail.Core.Interfaces;
-using TUnit.Core;
-using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -41,7 +36,7 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -62,7 +57,7 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -92,7 +87,7 @@ public class AzureEmailSenderTests
         
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -113,7 +108,7 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -134,6 +129,6 @@ public class AzureEmailSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 }

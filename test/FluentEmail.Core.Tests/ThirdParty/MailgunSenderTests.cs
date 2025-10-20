@@ -1,11 +1,6 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
+using System.IO;
 using FluentEmail.Mailgun;
 using Newtonsoft.Json;
-using System.IO;
-using System.Threading.Tasks;
-using TUnit.Core;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -18,7 +13,7 @@ public class MailgunSenderTests
     private const string Subject = "Attachment Tests";
     private const string Body = "This email is testing the attachment functionality of MailGun.";
 
-    private ISender Sender { get; set; }
+    private ISender Sender { get; }
 
     public MailgunSenderTests()
     {
@@ -39,7 +34,7 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -56,8 +51,8 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
-        (response.MessageId).Should().NotBeEmpty();
+        response.Successful.Should().BeTrue();
+        response.MessageId.Should().NotBeEmpty();
     }
 
     [Test]
@@ -75,7 +70,7 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -93,7 +88,7 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -103,8 +98,8 @@ public class MailgunSenderTests
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        sw.WriteLine("Hey this is some text in an attachment");
-        sw.Flush();
+        await sw.WriteLineAsync("Hey this is some text in an attachment");
+        await sw.FlushAsync();
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -124,37 +119,35 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
     public async Task CanSendEmailWithInlineImages()
     {
         if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
-        
-        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
+
+        await using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
+        var attachment = new Attachment
         {
-            var attachment = new Attachment
-            {
-                IsInline = true,
-                Data = stream,
-                ContentType = "image/png",
-                Filename = "logotest.png"
-            };
+            IsInline = true,
+            Data = stream,
+            ContentType = "image/png",
+            Filename = "logotest.png"
+        };
 
-            var email = Email
-                .From(_fromEmail)
-                .To(_toEmail)
-                .Subject(Subject)
-                .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-                .Attach(attachment);
+        var email = Email
+            .From(_fromEmail)
+            .To(_toEmail)
+            .Subject(Subject)
+            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                  "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+            .Attach(attachment);
 
-            email.Sender = Sender;
-            var response = await email.SendAsync();
+        email.Sender = Sender;
+        var response = await email.SendAsync();
 
-            (response.Successful).Should().BeTrue();
-        }
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -171,7 +164,7 @@ public class MailgunSenderTests
         email.Sender = Sender;
         var response = await email.SendWithTemplateAsync("test-template", new { var1 = "Test" });
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     private class Variable

@@ -9,7 +9,6 @@ using FluentEmail.Liquid;
 using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using TUnit.Core;
 using VerifyTests;
 using VerifyTUnit;
 

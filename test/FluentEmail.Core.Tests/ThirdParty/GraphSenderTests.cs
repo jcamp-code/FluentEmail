@@ -1,10 +1,4 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
 using FluentEmail.Graph;
-using System.IO;
-using System.Threading.Tasks;
-using TUnit.Core;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -42,7 +36,7 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = email.Send();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -58,7 +52,7 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = await email.SendAsync();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -88,7 +82,7 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = await email.SendAsync();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -105,6 +99,6 @@ public class GraphSenderTests
 
         email.Sender = Sender;
         var response = await email.SendAsync();
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 }

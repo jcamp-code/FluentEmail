@@ -1,10 +1,5 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
-using FluentEmail.Mailtrap;
 using System.IO;
-using System.Threading.Tasks;
-using TUnit.Core;
+using FluentEmail.Mailtrap;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -21,9 +16,9 @@ public class MailtrapSenderTests
     private readonly string _password = Credentials.MailTrap.Password;
     private readonly string _apiHost = Credentials.MailTrap.ApiHost;
     private readonly string _apiKey = Credentials.MailTrap.ApiKey;
-    private readonly string _templateid = Credentials.MailTrap.Template;
+    private readonly string _templateId = Credentials.MailTrap.Template;
 
-    private ISender Sender { get; set; }
+    private ISender Sender { get; }
 
     public MailtrapSenderTests()
     {
@@ -44,7 +39,7 @@ public class MailtrapSenderTests
         email.Sender = Sender;
         var response = email.Send();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
 
@@ -62,7 +57,7 @@ public class MailtrapSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -72,8 +67,8 @@ public class MailtrapSenderTests
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        sw.WriteLine("Hey this is some text in an attachment");
-        sw.Flush();
+        await sw.WriteLineAsync("Hey this is some text in an attachment");
+        await sw.FlushAsync();
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -93,37 +88,36 @@ public class MailtrapSenderTests
         email.Sender = Sender;
         var response = await email.SendAsync();
 
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
     public async Task CanSendEmailWithInlineImages()
     {
         if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
+
+        await using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
         
-        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
+        var attachment = new Attachment
         {
-            var attachment = new Attachment
-            {
-                IsInline = true,
-                Data = stream,
-                ContentType = "image/png",
-                Filename = "logotest.png"
-            };
+            IsInline = true,
+            Data = stream,
+            ContentType = "image/png",
+            Filename = "logotest.png"
+        };
 
-            var email = Email
-                .From(_fromEmail)
-                .To(_toEmail)
-                .Subject(Subject)
-                .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-                .Attach(attachment);
+        var email = Email
+            .From(_fromEmail)
+            .To(_toEmail)
+            .Subject(Subject)
+            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                  "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+            .Attach(attachment);
 
-            email.Sender = Sender;
-            var response = await email.SendAsync();
+        email.Sender = Sender;
+        var response = await email.SendAsync();
 
-            (response.Successful).Should().BeTrue();
-        }
+        response.Successful.Should().BeTrue();
     }
 
     [Test]
@@ -134,8 +128,8 @@ public class MailtrapSenderTests
         var email = Email.From(_fromEmail).To(_toEmail);
         email.Sender = new MailtrapSender(_username, _apiKey, _host, 587, _apiHost);
 
-        var response = await email.SendWithTemplateAsync(_templateid, new { var1 = "Test", var2 = "VVVVVVVVVVVVV" });
+        var response = await email.SendWithTemplateAsync(_templateId, new { var1 = "Test", var2 = "VVVVVVVVVVVVV" });
         
-        (response.Successful).Should().BeTrue();
+        response.Successful.Should().BeTrue();
     }
 }

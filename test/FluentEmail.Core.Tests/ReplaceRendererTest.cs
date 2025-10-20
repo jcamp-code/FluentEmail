@@ -1,8 +1,4 @@
 ﻿using FluentEmail.Core.Defaults;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
-using TUnit.Core;
-using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
 

@@ -8,7 +8,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="TUnit" Version="0.73.19" />
     <PackageReference Include="AwesomeAssertions" Version="9.2.1" />
   </ItemGroup>
