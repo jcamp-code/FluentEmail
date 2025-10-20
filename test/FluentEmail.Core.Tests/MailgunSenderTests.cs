@@ -1,5 +1,3 @@
-﻿using System.IO;
-using System.Threading.Tasks;
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using Xunit;
@@ -10,14 +8,14 @@ namespace FluentEmail.Mailgun.Tests
 {
     public class MailgunSenderTests
     {
-        const string toEmail = "bentest1@mailinator.com";
-        const string fromEmail = "ben@test.com";
+        private readonly string toEmail = Credentials.Mailgun.ToEmail ?? Credentials.ToEmail;
+        private readonly string fromEmail = Credentials.Mailgun.FromEmail ?? Credentials.FromEmail;
         const string subject = "Attachment Tests";
         const string body = "This email is testing the attachment functionality of MailGun.";
 
         public MailgunSenderTests()
         {
-            var sender = new MailgunSender("<name>", "<key>");
+            var sender = new MailgunSender(Credentials.Mailgun.Domain, Credentials.Mailgun.ApiKey);
             Email.DefaultSender = sender;
         }
 

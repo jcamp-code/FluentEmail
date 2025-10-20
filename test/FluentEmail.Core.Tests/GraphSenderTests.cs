@@ -5,17 +5,17 @@ using AwesomeAssertions;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using FluentEmail.Core.Tests;
 
 namespace FluentEmail.Graph.Tests
 {
     public class Tests
     {
-        //TODO: For these tests to pass you will need to supply the following details from an Azure AD / Office 365 Tenant
-        const string appId = ""; //Add your AAD Graph App ID here
-        const string tenantId = ""; //Add your AAD Tenant ID here
-        const string graphSecret = ""; //Add your AAD Graph Client Secret here
-        const string senderEmail = ""; //Add a sender email address from your Office 365 tenant
-        const string toEmail = "fluentemail@mailinator.com"; //change this if you like
+        private readonly string appId = Credentials.Graph.AppId;
+        private readonly string tenantId = Credentials.Graph.TenantId;
+        private readonly string graphSecret = Credentials.Graph.ClientSecret;
+        private readonly string senderEmail = Credentials.Graph.FromEmail ?? Credentials.FromEmail;
+        private readonly string toEmail = Credentials.Graph.ToEmail ?? Credentials.ToEmail;
         private bool saveSent = false;
 
         // SetUp converted to constructor - needs manual review

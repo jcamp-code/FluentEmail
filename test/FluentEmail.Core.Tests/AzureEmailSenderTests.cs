@@ -1,3 +1,5 @@
+using FluentEmail.Core.Tests;
+using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,11 +12,11 @@ namespace FluentEmail.Azure.Email.Tests
     [Collection("NonParallel")]
     public class AzureEmailSenderTests
     {
-        const string connectionString = ""; // TODO: Put your ConnectionString here
+        private readonly string toEmail = Credentials.Azure.ToEmail ?? Credentials.ToEmail;
+        private readonly string fromEmail = Credentials.Azure.FromEmail ?? Credentials.FromEmail;
+        private readonly string connectionString = Credentials.Azure.ApiHost;
 
-        const string toEmail = "fluentEmail@mailinator.com";
-        const string toName = "FluentEmail Mailinator";
-        const string fromEmail = "test@fluentmail.com"; // TODO: Put a valid/verified sender here
+        const string toName = "FluentEmail tester";
         const string fromName = "AzureEmailSender Test";
 
         public AzureEmailSenderTests()

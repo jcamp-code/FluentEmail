@@ -1,4 +1,4 @@
-﻿using FluentEmail.Core;
+using FluentEmail.Core;
 using Xunit;
 using AwesomeAssertions;
 using System;
@@ -10,11 +10,11 @@ namespace FluentEmail.SendGrid.Tests
 {
     public class SendGridSenderTests
     {
-        const string apiKey = "missing-credentials"; // TODO: Put your API key here
+        private readonly string apiKey = Credentials.SendGrid.ApiKey;
+        private readonly string toEmail = Credentials.SendGrid.ToEmail ?? Credentials.ToEmail;
+        private readonly string fromEmail = Credentials.SendGrid.FromEmail ?? Credentials.FromEmail;
 
-        const string toEmail = "fluentEmail@mailinator.com";
-        const string toName = "FluentEmail Mailinator";
-        const string fromEmail = "test@fluentmail.com";
+        const string toName = "FluentEmail Test";
         const string fromName = "SendGridSender Test";
 
         public SendGridSenderTests()
@@ -46,7 +46,7 @@ namespace FluentEmail.SendGrid.Tests
         public async Task CanSendTemplateEmail()
         {
             const string subject = "SendMail Test";
-            const string templateId = "123456-insert-your-own-id-here";
+            var templateId = Credentials.SendGrid.Template;
             object templateData = new
             {
                 Name = toName,

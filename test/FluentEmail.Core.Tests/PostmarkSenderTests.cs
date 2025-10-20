@@ -1,3 +1,7 @@
+using FluentAssertions;
+using FluentEmail.Core;
+using FluentEmail.Core.Tests;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +16,15 @@ namespace FluentEmail.Postmark.Tests
     // Skipped: missing Postmark API key - tests in this class will be skipped
     public class WithTestApiToken
     {
+        private readonly string apiKey = Credentials.Postmark.ApiKey;
         
-        const string apiKey = "postmark-api-key"; // TODO: Put your API key here
         const string toEmail = "test@blackhole.postmarkapp.com";
         const string toEmailHash = "test+test@blackhole.postmarkapp.com";
         const string toEmailHash2 = "test+second@blackhole.postmarkapp.com";
         const string toName = "Test Name";
-        const string fromEmail = "insert-sender-signature-here";
+        private readonly string fromEmail = Credentials.Postmark.FromEmail ?? Credentials.FromEmail;
         const string fromName = "from name";
-        const string fromEmailHash = "insert-sender-signature-here";
+        private readonly string fromEmailHash = Credentials.Postmark.FromEmail ?? Credentials.FromEmail;
 
         [Fact]
         public void SimpleMailFromCodeSync()

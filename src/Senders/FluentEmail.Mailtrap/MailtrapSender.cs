@@ -19,10 +19,10 @@ namespace FluentEmail.Mailtrap
     /// </summary>
     public class MailtrapSender : IMailtrapSender, IDisposable
     {
-        private const string URL = "https://send.api.mailtrap.io/api/send";
         private readonly SmtpClient _smtpClient;
         private static readonly int[] ValidPorts = {25,587, 2525};
         private readonly string _apiKey;
+        private readonly string _apiHost;
 
         /// <summary>
         /// Creates a sender that uses the given Mailtrap credentials, but does not dispose it.
@@ -31,7 +31,7 @@ namespace FluentEmail.Mailtrap
         /// <param name="password">Password of your mailtrap.io SMTP inbox</param>
         /// <param name="host">Host address for the Mailtrap.io SMTP inbox</param>
         /// <param name="port">Port for the Mailtrap.io SMTP server. Accepted values are 25, 465 or 2525.</param>
-        public MailtrapSender(string userName, string password, string host = "smtp.mailtrap.io", int? port = null)
+        public MailtrapSender(string userName, string password, string host = "smtp.mailtrap.io", int? port = null, string apiHost = "https://send.api.mailtrap.io/api/send")
         {
             if (string.IsNullOrWhiteSpace(userName))
                 throw new ArgumentException("Mailtrap UserName needs to be supplied", nameof(userName));
@@ -42,6 +42,7 @@ namespace FluentEmail.Mailtrap
             if (port.HasValue && !ValidPorts.Contains(port.Value))
                 throw new ArgumentException("Mailtrap Port needs to be either 25, 465 or 2525", nameof(port));
             _apiKey = password;
+            _apiHost = apiHost;
             _smtpClient = new SmtpClient(host, port.GetValueOrDefault(587))
             {
                 Credentials = new NetworkCredential(userName, password),
@@ -66,12 +67,12 @@ namespace FluentEmail.Mailtrap
         public async Task<SendResponse> SendWithTemplateAsync(IFluentEmail email, string templateName, object templateData, CancellationToken? token = null)
         {
             token?.ThrowIfCancellationRequested();
-            using (var httpClient = new HttpClient { BaseAddress = new Uri(URL) })
+            using (var httpClient = new HttpClient { BaseAddress = new Uri(_apiHost) })
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 var jsonContent = HttpClientHelpers.GetJsonBody(BuildMailtrapParameters(email, templateName, templateData));
-                var response = await httpClient.Post<MailtrapResponse>(URL, jsonContent);
+                var response = await httpClient.Post<MailtrapResponse>(_apiHost, jsonContent);
                 var result = new SendResponse { MessageId = response.Data?.Id };
                 if (!response.Success)
                 {

@@ -30,6 +30,14 @@
     </None>
     <EmbeddedResource Include="EmailTemplates\test-embedded.txt" />
     <EmbeddedResource Include="test-embedded.txt" />
+    <PackageReference Include="dotenv.net" Version="4.0.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <None Update=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update=".env.sample">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="logotest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
