@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AwesomeAssertions;
 using FluentEmail.Core;
+using FluentEmail.Core.Interfaces;
 using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -11,22 +12,17 @@ namespace FluentEmail.Liquid.Tests.ComplexModel
 {
     public class ComplexModelRenderTests
     {
-        public ComplexModelRenderTests()
-        {
-            SetupRenderer();
-        }
-
         [Fact]
         public void Can_Render_Complex_Model_Properties()
         {
             var model = new ParentModel
             {
                 ParentName = new NameDetails { Firstname = "Luke", Surname = "Dinosaur" },
-                ChildrenNames = new List<NameDetails>
-                {
+                ChildrenNames =
+                [
                     new NameDetails { Firstname = "ChildFirstA", Surname = "ChildLastA" },
                     new NameDetails { Firstname = "ChildFirstB", Surname = "ChildLastB" }
-                }
+                ]
             };
 
             var expected = @"
@@ -40,8 +36,12 @@ Children:
             var email = Email
                 .From(TestData.FromEmail)
                 .To(TestData.ToEmail)
-                .Subject(TestData.Subject)
-                .UsingTemplate(Template(), model);
+                .Subject(TestData.Subject);
+                
+            email.Renderer = SetupRenderer();
+                
+            email.UsingTemplate(Template(), model);
+
             email.Data.Body.Should().Be(expected);
         }
 
@@ -55,7 +55,7 @@ Children:
 ";
         }
 
-        private static void SetupRenderer(
+        private static ITemplateRenderer SetupRenderer(
             IFileProvider fileProvider = null,
             Action<TemplateContext, object> configureTemplateContext = null)
         {
@@ -65,7 +65,7 @@ Children:
                 ConfigureTemplateContext = configureTemplateContext,
                 TemplateOptions = new TemplateOptions { MemberAccessStrategy = new UnsafeMemberAccessStrategy() }
             };
-            Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
+            return new LiquidRenderer(Options.Create(options));
         }
     }
 }

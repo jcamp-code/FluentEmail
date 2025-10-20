@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentEmail.Core;
+using FluentEmail.Core.Interfaces;
 using FluentEmail.Liquid;
 using Fluid;
 using Microsoft.Extensions.FileProviders;
@@ -25,11 +26,9 @@ public class BootstrapTests
     {
         _settings.ScrubLinesContaining("Compiled with Bootstrap Email DotNet");
         _settings.DisableDiff();
-        // default to have no file provider, only required when layout files are in use
-        SetupRenderer();
     }
 
-    private static void SetupRenderer(
+    private static ITemplateRenderer SetupRenderer(
         IFileProvider fileProvider = null,
         Action<TemplateContext, object> configureTemplateContext = null)
     {
@@ -38,7 +37,7 @@ public class BootstrapTests
             FileProvider = fileProvider,
             ConfigureTemplateContext = configureTemplateContext,
         };
-        Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
+        return new LiquidRenderer(Options.Create(options));
     }
 
     [Fact]
@@ -51,8 +50,10 @@ public class BootstrapTests
                          </body>
                        </html>
                        """;
-        var email = Email
-            .From(FromEmail)
+        var email = new Email(FromEmail)
+            {
+                Renderer = SetupRenderer()
+            }
             .To(ToEmail)
             .Subject(Subject)
             .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } })
@@ -71,8 +72,10 @@ public class BootstrapTests
                      </body>
                    </html>
                    """;
-        var email = Email
-            .From(FromEmail)
+        var email = new Email(FromEmail)
+            {
+                Renderer = SetupRenderer()
+            }
             .To(ToEmail)
             .Subject(Subject)
             .UsingBootstrapBody(body);
@@ -91,8 +94,10 @@ public class BootstrapTests
                          </body>
                        </html>
                        """;
-        var email = Email
-            .From(FromEmail)
+        var email = new Email(FromEmail)
+            {
+                Renderer = SetupRenderer()
+            }
             .To(ToEmail)
             .Subject(Subject)
             .UsingBootstrapTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });

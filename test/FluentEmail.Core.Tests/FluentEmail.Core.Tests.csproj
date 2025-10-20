@@ -31,7 +31,6 @@
     <EmbeddedResource Include="EmailTemplates\test-embedded.txt" />
     <EmbeddedResource Include="test-embedded.txt" />
     <PackageReference Include="dotenv.net" Version="4.0.0" />
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <None Update=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -44,7 +43,6 @@
     <None Update="test-binary.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.8.0" />
   </ItemGroup>
 
 </Project>

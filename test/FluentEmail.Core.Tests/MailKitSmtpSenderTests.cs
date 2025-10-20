@@ -1,194 +1,214 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using FluentEmail.Core;
+﻿using AwesomeAssertions;
+using FluentEmail.Core.Interfaces;
 using FluentEmail.MailKitSmtp;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Xunit;
-using AwesomeAssertions;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
-namespace FluentEmail.MailKit.Tests
+namespace FluentEmail.Core.Tests;
+
+public class MailKitSmtpSenderTests
 {
-    // Note: XUnit runs tests in parallel by default. Use Collection attribute if sequential execution is needed.
-    public class MailKitSmtpSenderTests
+    private const string ToEmail = "bob@test.com";
+    private const string FromEmail = "johno@test.com";
+    private const string Subject = "sup dawg";
+    private const string Body = "what be the hipitity hap?";
+
+    private ISender GetSender(out string tempDirectory)
     {
-        // Warning: To pass, an smtp listener must be running on localhost:25.
+        var path = Path.Combine(Path.GetTempPath(), Random.Shared.NextInt64().ToString(), "EmailTest");
 
-        const string toEmail = "bob@test.com";
-        const string fromEmail = "johno@test.com";
-        const string subject = "sup dawg";
-        const string body = "what be the hipitity hap?";
-
-        private readonly string tempDirectory;
-
-        public MailKitSmtpSenderTests()
+        var sender = new MailKitSender(new SmtpClientOptions
         {
-            tempDirectory = Path.Combine(Path.GetTempPath(), "EmailTest");
-            
-            var sender = new MailKitSender(new SmtpClientOptions
-            {
-                Server = "localhost",
-                Port = 25,
-                UseSsl = false,
-                RequiresAuthentication = false,
-                UsePickupDirectory = true,
-                MailPickupDirectory = Path.Combine(Path.GetTempPath(), "EmailTest")
-            });
+            Server = "localhost",
+            Port = 25,
+            UseSsl = false,
+            RequiresAuthentication = false,
+            UsePickupDirectory = true,
+            MailPickupDirectory = path
+        });
 
-            Email.DefaultSender = sender;
-            Directory.CreateDirectory(tempDirectory);
-        }
+        Directory.CreateDirectory(path);
+        tempDirectory = path;
+        return sender;
+    }
 
-        // Note: XUnit uses IDisposable for cleanup instead of TearDown.
-        public void TearDown()
+    private void DeleteTemp(string tempDirectory)
+    {
+        try
         {
             Directory.Delete(tempDirectory, true);
         }
-
-        [Fact]
-        public void CanSendEmail()
+        // ReSharper disable once EmptyGeneralCatchClause
+        catch
         {
-            var email = Email
-                .From(fromEmail)
-                .To(toEmail)
-                .Body("<h2>Test</h2>", true);
-
-            var response = email.Send();
-
-            var files = Directory.EnumerateFiles(tempDirectory, "*.eml");
-            (response.Successful).Should().BeTrue();
-            (files).Should().NotBeEmpty();
         }
+    }
 
-        [Fact]
-        public async Task CanSendEmailWithAttachments()
+    [Fact]
+    public void CanSendEmail()
+    {
+        var email = Email
+            .From(FromEmail)
+            .To(ToEmail)
+            .Body("<h2>Test</h2>", true);
+
+        email.Sender = GetSender(out var s);
+        
+        var response = email.Send();
+
+        var files = Directory.EnumerateFiles(s, "*.eml");
+        (response.Successful).Should().BeTrue();
+        (files).Should().NotBeEmpty();
+        
+        DeleteTemp(s);
+    }
+
+    [Fact]
+    public async Task CanSendEmailWithAttachments()
+    {
+        var stream = new MemoryStream();
+        var sw = new StreamWriter(stream);
+        sw.WriteLine("Hey this is some text in an attachment");
+        sw.Flush();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        var attachment = new Attachment
         {
-            var stream = new MemoryStream();
-            var sw = new StreamWriter(stream);
-            sw.WriteLine("Hey this is some text in an attachment");
-            sw.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
+            Data = stream,
+            ContentType = "text/plain",
+            Filename = "MailKitAttachment.txt"
+        };
 
+        var email = Email
+            .From(FromEmail)
+            .To(ToEmail)
+            .Subject(Subject)
+            .Body(Body)
+            .Attach(attachment);
+
+        email.Sender = GetSender(out var s);
+
+        var response = await email.SendAsync();
+
+        var files = Directory.EnumerateFiles(s, "*.eml");
+        (response.Successful).Should().BeTrue();
+        (files).Should().NotBeEmpty();
+        
+        DeleteTemp(s);
+    }
+
+    [Theory]
+    [InlineData("logotest.png")]
+    public async Task CanSendEmailWithInlineImages(string contentId = null)
+    {
+        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
+        {
             var attachment = new Attachment
-            {
-                Data = stream,
-                ContentType = "text/plain",
-                Filename = "MailKitAttachment.txt"
-            };
-
-            var email = Email
-                .From(fromEmail)
-                .To(toEmail)
-                .Subject(subject)
-                .Body(body)
-                .Attach(attachment);
-
-            var response = await email.SendAsync();
-
-            var files = Directory.EnumerateFiles(tempDirectory, "*.eml");
-            (response.Successful).Should().BeTrue();
-            (files).Should().NotBeEmpty();
-        }
-
-        [Theory]
-        [InlineData("logotest.png")]
-        public async Task CanSendEmailWithInlineImages(string contentId = null)
-        {
-            using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
-            {
-                var attachment = new Attachment
-                {
-                    IsInline = true,
-                    Data = stream,
-                    ContentType = "image/png",
-                    Filename = "logotest.png",
-                    ContentId = contentId
-                };
-
-                var email = Email
-                    .From(fromEmail)
-                    .To(toEmail)
-                    .Subject(subject)
-                    .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                          "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-                    .Attach(attachment);
-
-                var response = await email.SendAsync();
-
-                var files = Directory.EnumerateFiles(tempDirectory, "*.eml");
-                (response.Successful).Should().BeTrue();
-                (files).Should().NotBeEmpty();
-            }
-        }
-
-        [Fact]
-        public async Task CanSendEmailWithInlineImagesAndAttachmentTogether()
-        {
-            var attachmentStream = new MemoryStream();
-            var sw = new StreamWriter(attachmentStream);
-            sw.WriteLine("Hey this is some text in an attachment");
-            sw.Flush();
-            attachmentStream.Seek(0, SeekOrigin.Begin);
-
-            var attachment = new Attachment
-            {
-                Data = attachmentStream,
-                ContentType = "text/plain",
-                Filename = "MailKitAttachment.txt",
-            };
-
-            using var inlineStream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
-
-            var attachmentInline = new Attachment
             {
                 IsInline = true,
-                Data = inlineStream,
+                Data = stream,
                 ContentType = "image/png",
                 Filename = "logotest.png",
+                ContentId = contentId
             };
 
             var email = Email
-                .From(fromEmail)
-                .To(toEmail)
-                .Subject(subject)
+                .From(FromEmail)
+                .To(ToEmail)
+                .Subject(Subject)
                 .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                      "<p>You should see an image inline without a picture attachment.</p>" +
-                      "<p>A single .txt file should also be attached.</p></html>", true)
-                .Attach(attachment)
-                .Attach(attachmentInline);
+                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+                .Attach(attachment);
 
+            email.Sender = GetSender(out var s);
             var response = await email.SendAsync();
 
-            var files = Directory.EnumerateFiles(tempDirectory, "*.eml");
+            var files = Directory.EnumerateFiles(s, "*.eml");
             (response.Successful).Should().BeTrue();
             (files).Should().NotBeEmpty();
+            DeleteTemp(s);
         }
+    }
 
-        [Fact]
-        public async Task CanSendAsyncHtmlAndPlaintextTogether()
+    [Fact]
+    public async Task CanSendEmailWithInlineImagesAndAttachmentTogether()
+    {
+        var attachmentStream = new MemoryStream();
+        var sw = new StreamWriter(attachmentStream);
+        sw.WriteLine("Hey this is some text in an attachment");
+        sw.Flush();
+        attachmentStream.Seek(0, SeekOrigin.Begin);
+
+        var attachment = new Attachment
         {
-            var email = Email
-                .From(fromEmail)
-                .To(toEmail)
-                .Body("<h2>Test</h2><p>some body text</p>", true)
-                .PlaintextAlternativeBody("Test - Some body text");
+            Data = attachmentStream,
+            ContentType = "text/plain",
+            Filename = "MailKitAttachment.txt",
+        };
 
-            var response = await email.SendAsync();
+        using var inlineStream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
 
-            (response.Successful).Should().BeTrue();
-        }
-
-        [Fact]
-        public void CanSendHtmlAndPlaintextTogether()
+        var attachmentInline = new Attachment
         {
-            var email = Email
-                .From(fromEmail)
-                .To(toEmail)
-                .Body("<h2>Test</h2><p>some body text</p>", true)
-                .PlaintextAlternativeBody("Test - Some body text");
+            IsInline = true,
+            Data = inlineStream,
+            ContentType = "image/png",
+            Filename = "logotest.png",
+        };
 
-            var response = email.Send();
+        var email = Email
+            .From(FromEmail)
+            .To(ToEmail)
+            .Subject(Subject)
+            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                  "<p>You should see an image inline without a picture attachment.</p>" +
+                  "<p>A single .txt file should also be attached.</p></html>", true)
+            .Attach(attachment)
+            .Attach(attachmentInline);
 
-            (response.Successful).Should().BeTrue();
-        }
+        email.Sender = GetSender(out var s);
+        
+        var response = await email.SendAsync();
+
+        var files = Directory.EnumerateFiles(s, "*.eml");
+        (response.Successful).Should().BeTrue();
+        (files).Should().NotBeEmpty();
+        
+        DeleteTemp(s);
+    }
+
+    [Fact]
+    public async Task CanSendAsyncHtmlAndPlaintextTogether()
+    {
+        var email = Email
+            .From(FromEmail)
+            .To(ToEmail)
+            .Body("<h2>Test</h2><p>some body text</p>", true)
+            .PlaintextAlternativeBody("Test - Some body text");
+
+        email.Sender = GetSender(out var s);
+        var response = await email.SendAsync();
+        DeleteTemp(s);
+
+        (response.Successful).Should().BeTrue();
+    }
+
+    [Fact]
+    public void CanSendHtmlAndPlaintextTogether()
+    {
+        var email = Email
+            .From(FromEmail)
+            .To(ToEmail)
+            .Body("<h2>Test</h2><p>some body text</p>", true)
+            .PlaintextAlternativeBody("Test - Some body text");
+
+        email.Sender = GetSender(out var s);
+        var response = email.Send();
+        DeleteTemp(s);
+
+        (response.Successful).Should().BeTrue();
     }
 }

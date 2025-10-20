@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 
 using Xunit;
 using AwesomeAssertions;
+using FluentEmail.Core.Interfaces;
 
 namespace FluentEmail.Liquid.Tests
 {
@@ -23,13 +24,7 @@ namespace FluentEmail.Liquid.Tests
         private const string FromEmail = "johno@test.com";
         private const string Subject = "sup dawg";
 
-        public LiquidTests()
-        {
-            // default to have no file provider, only required when layout files are in use
-            SetupRenderer();
-        }
-
-        private static void SetupRenderer(
+        private static ITemplateRenderer SetupRenderer(
             IFileProvider fileProvider = null,
             Action<TemplateContext, object> configureTemplateContext = null,
             Action<LiquidParser> configureParser = null)
@@ -40,7 +35,7 @@ namespace FluentEmail.Liquid.Tests
                 ConfigureTemplateContext = configureTemplateContext,
                 ConfigureParser = configureParser
             };
-            Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
+            return new LiquidRenderer(Options.Create(options));
         }
 
         [Fact]
@@ -51,8 +46,9 @@ namespace FluentEmail.Liquid.Tests
             var email = Email
                 .From(FromEmail)
                 .To(ToEmail)
-                .Subject(Subject)
-                .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+                .Subject(Subject);
+                email.Renderer = SetupRenderer();
+                email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
@@ -60,7 +56,7 @@ namespace FluentEmail.Liquid.Tests
         [Fact]
         public void Custom_Context_Values()
         {
-            SetupRenderer(new NullFileProvider(), (context, model) =>
+            var renderer = SetupRenderer(new NullFileProvider(), (context, model) =>
             {
                 context.SetValue("FirstName", "Samantha");
                 context.SetValue("IntegerNumbers", new[] {3, 2, 1});
@@ -71,8 +67,9 @@ namespace FluentEmail.Liquid.Tests
             var email = Email
                 .From(FromEmail)
                 .To(ToEmail)
-                .Subject(Subject)
-                .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+                .Subject(Subject);
+            email.Renderer = renderer;
+            email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
             email.Data.Body.Should().Be("sup Samantha here is a list 321");
         }
@@ -89,16 +86,18 @@ namespace FluentEmail.Liquid.Tests
                 var email = Email
                     .From(FromEmail)
                     .To(ToEmail)
-                    .Subject(Subject)
-                    .UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
+                    .Subject(Subject);
+                email.Renderer = SetupRenderer();
+                email.UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
 
                 email.Data.Body.Should().Be("sup " + i + " here is a list 123");
 
                 var email2 = Email
                     .From(FromEmail)
                     .To(ToEmail)
-                    .Subject(Subject)
-                    .UsingTemplate(template2, new ViewModel { Name = i.ToString() });
+                    .Subject(Subject);
+                email2.Renderer = SetupRenderer();
+                email2.UsingTemplate(template2, new ViewModel { Name = i.ToString() });
 
                 email2.Data.Body.Should().Be("sup " + i + " this is the second template");
             }
@@ -111,8 +110,9 @@ namespace FluentEmail.Liquid.Tests
 
             var email = new Email(FromEmail)
                 .To(ToEmail)
-                .Subject(Subject)
-                .UsingTemplate(template, new ViewModel { Name = "LUKE" });
+                .Subject(Subject);
+            email.Renderer = SetupRenderer();
+            email.UsingTemplate(template, new ViewModel { Name = "LUKE" });
 
             email.Data.Body.Should().Be("sup LUKE");
         }
@@ -124,8 +124,9 @@ namespace FluentEmail.Liquid.Tests
 
             var email = new Email(FromEmail)
                 .To(ToEmail)
-                .Subject(Subject)
-                .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+                .Subject(Subject);
+            email.Renderer = SetupRenderer();
+            email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
@@ -141,15 +142,17 @@ namespace FluentEmail.Liquid.Tests
             {
                 var email = new Email(FromEmail)
                     .To(ToEmail)
-                    .Subject(Subject)
-                    .UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
+                    .Subject(Subject);
+                email.Renderer = SetupRenderer();
+                email.UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
 
                 email.Data.Body.Should().Be("sup " + i + " here is a list 123");
 
                 var email2 = new Email(FromEmail)
                     .To(ToEmail)
-                    .Subject(Subject)
-                    .UsingTemplate(template2, new ViewModel { Name = i.ToString() });
+                    .Subject(Subject);
+                email2.Renderer = SetupRenderer();
+                email2.UsingTemplate(template2, new ViewModel { Name = i.ToString() });
 
                 email2.Data.Body.Should().Be("sup " + i + " this is the second template");
             }
@@ -158,15 +161,16 @@ namespace FluentEmail.Liquid.Tests
 	    [Fact]
 	    public void Should_be_able_to_use_project_layout()
 	    {
-            SetupRenderer(new PhysicalFileProvider(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory!.FullName, "EmailTemplates")));
+            var renderer = SetupRenderer(new PhysicalFileProvider(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory!.FullName, "EmailTemplates")));
 
 		    const string template = @"{% layout '_layout.liquid' %}
 sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
 
 			var email = new Email(FromEmail)
 			    .To(ToEmail)
-			    .Subject(Subject)
-			    .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+			    .Subject(Subject);
+            email.Renderer = renderer;
+            email.UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
 		    email.Data.Body.Should().Be($"<h1>Hello!</h1>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
 	    }
@@ -174,14 +178,16 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
         [Fact]
         public void Should_be_able_to_use_embedded_layout()
         {
-            SetupRenderer(new EmbeddedFileProvider(typeof(LiquidTests).Assembly, "FluentEmail.Liquid.Tests.EmailTemplates"));
+            var renderer = SetupRenderer(new EmbeddedFileProvider(typeof(LiquidTests).Assembly, "FluentEmail.Liquid.Tests.EmailTemplates"));
 
             const string template = @"{% layout '_embedded.liquid' %}
 sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
 
             var email = new Email(FromEmail)
                 .To(ToEmail)
-                .Subject(Subject)
+                .Subject(Subject);
+            email.Renderer = renderer;
+            email
                 .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
             email.Data.Body.Should().Be($"<h2>Hello!</h2>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
@@ -190,7 +196,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
         [Fact]
         public void Should_be_able_to_configure_parser()
         {
-            SetupRenderer(
+            var renderer = SetupRenderer(
                 new EmbeddedFileProvider(typeof(LiquidTests).Assembly, "FluentEmail.Liquid.Tests.EmailTemplates"),
                 configureParser: parser => parser.RegisterExpressionTag("testTag", TestTag)
             );
@@ -200,8 +206,9 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
             var email = Email
                 .From(FromEmail)
                 .To(ToEmail)
-                .Subject(Subject)
-                .UsingTemplate(template, new ViewModel { Name = "LUKE" });
+                .Subject(Subject);
+            email.Renderer = renderer;
+            email.UsingTemplate(template, new ViewModel { Name = "LUKE" });
 
             email.Data.Body.Should().Be("sup LUKE here is a custom tag: Hello from custom tag test");
 
