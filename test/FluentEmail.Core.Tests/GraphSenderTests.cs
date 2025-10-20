@@ -1,6 +1,7 @@
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace FluentEmail.Graph.Tests
         const string toEmail = "fluentemail@mailinator.com"; //change this if you like
         private bool saveSent = false;
 
-        [SetUp]
+        // SetUp converted to constructor - needs manual review
         public void Setup()
         {
             if (string.IsNullOrWhiteSpace(appId)) throw new ArgumentException("Graph App ID needs to be supplied");
@@ -30,7 +31,7 @@ namespace FluentEmail.Graph.Tests
             Email.DefaultSender = sender;
         }
 
-        [Test, Ignore("Missing Graph credentials")]
+        [Fact(Skip="Missing Graph credentials")]
         public void CanSendEmail()
         {
             var email = Email
@@ -40,10 +41,10 @@ namespace FluentEmail.Graph.Tests
                 .Body("Test email from Graph sender unit test");
 
             var response = email.Send();
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("Missing Graph credentials")]
+        [Fact(Skip="Missing Graph credentials")]
         public async Task CanSendEmailAsync()
         {
             var email = Email
@@ -53,10 +54,10 @@ namespace FluentEmail.Graph.Tests
                 .Body("Test email from Graph sender unit test");
 
             var response = await email.SendAsync();
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("Missing Graph credentials")]
+        [Fact(Skip="Missing Graph credentials")]
         public async Task CanSendEmailWithAttachments()
         {
             var stream = new MemoryStream();
@@ -80,10 +81,10 @@ namespace FluentEmail.Graph.Tests
                 .Attach(attachment);
 
             var response = await email.SendAsync();
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("Missing Graph credentials")]
+        [Fact(Skip="Missing Graph credentials")]
         public async Task CanSendHighPriorityEmail()
         {
             var email = Email
@@ -94,7 +95,7 @@ namespace FluentEmail.Graph.Tests
                 .HighPriority();
 
             var response = await email.SendAsync();
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
     }
 }

@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Azure.Email.Tests
 {
-    [NonParallelizable]
+    // Note: XUnit runs tests in parallel by default. Use Collection attribute if sequential execution is needed.
     public class AzureEmailSenderTests
     {
         const string connectionString = ""; // TODO: Put your ConnectionString here
@@ -16,7 +17,7 @@ namespace FluentEmail.Azure.Email.Tests
         const string fromEmail = "test@fluentmail.com"; // TODO: Put a valid/verified sender here
         const string fromName = "AzureEmailSender Test";
 
-        [SetUp]
+        // SetUp converted to constructor - needs manual review
         public void SetUp()
         {
             if (string.IsNullOrWhiteSpace(connectionString)) throw new ArgumentException("Azure Communication Services Connection String needs to be supplied");
@@ -25,7 +26,7 @@ namespace FluentEmail.Azure.Email.Tests
             Core.Email.DefaultSender = sender;
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Fact(Skip="No azure credentials")]
         public async Task CanSendEmail()
         {
             const string subject = "SendMail Test";
@@ -39,10 +40,10 @@ namespace FluentEmail.Azure.Email.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
         
-        [Test, Ignore("No azure credentials")]
+        [Fact(Skip="No azure credentials")]
         public async Task CanSendEmailWithReplyTo()
         {
             const string subject = "SendMail Test";
@@ -57,10 +58,10 @@ namespace FluentEmail.Azure.Email.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Fact(Skip="No azure credentials")]
         public async Task CanSendEmailWithAttachments()
         {
             const string subject = "SendMail With Attachments Test";
@@ -84,10 +85,10 @@ namespace FluentEmail.Azure.Email.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Fact(Skip="No azure credentials")]
         public async Task CanSendHighPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -102,10 +103,10 @@ namespace FluentEmail.Azure.Email.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Fact(Skip="No azure credentials")]
         public async Task CanSendLowPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -120,7 +121,7 @@ namespace FluentEmail.Azure.Email.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
     }
 }

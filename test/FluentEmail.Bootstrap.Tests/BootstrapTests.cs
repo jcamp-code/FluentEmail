@@ -8,9 +8,9 @@ using FluentEmail.Liquid;
 using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using NUnit.Framework;
+using Xunit;
+using VerifyXunit;
 using VerifyTests;
-using VerifyNUnit;
 
 namespace FluentEmail.Bootstrap.Tests;
 
@@ -21,8 +21,7 @@ public class BootstrapTests
     private const string Subject = "sup dawg";
     private readonly VerifySettings _settings = new();
 
-    [SetUp]
-    public void SetUp()
+    public BootstrapTests()
     {
         _settings.ScrubLinesContaining("Compiled with Bootstrap Email DotNet");
         _settings.DisableDiff();
@@ -42,7 +41,7 @@ public class BootstrapTests
         Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
     }
 
-    [Test]
+    [Fact]
     public Task CompileBootstrap_Compiles()
     {
         var template = """
@@ -62,7 +61,7 @@ public class BootstrapTests
         return Verifier.Verify(email.Data.Body, _settings);
     }
 
-    [Test]
+    [Fact]
     public Task UsingBootstrapBody_Compiles()
     {
         var body = """
@@ -82,7 +81,7 @@ public class BootstrapTests
     }
 
 
-    [Test]
+    [Fact]
     public Task UsingBootstrapTemplate_Compiles()
     {
         var template = """

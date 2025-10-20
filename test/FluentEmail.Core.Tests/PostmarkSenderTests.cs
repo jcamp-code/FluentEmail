@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentEmail.Core;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 
 namespace FluentEmail.Postmark.Tests
 {
-    [Ignore("missing Postmark API key")]
+    // Skipped: missing Postmark API key - tests in this class will be skipped
     public class WithTestApiToken
     {
         
@@ -21,7 +22,7 @@ namespace FluentEmail.Postmark.Tests
         const string fromName = "from name";
         const string fromEmailHash = "insert-sender-signature-here";
 
-        [Test]
+        [Fact]
         public void SimpleMailFromCodeSync()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -36,7 +37,7 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailFromCode()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -54,7 +55,7 @@ namespace FluentEmail.Postmark.Tests
             response.ErrorMessages.Should().BeEmpty();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailFromCodeWithAddressesWithPlus()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -73,7 +74,7 @@ namespace FluentEmail.Postmark.Tests
             response.ErrorMessages.Should().BeEmpty();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailReplyTo()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -92,7 +93,7 @@ namespace FluentEmail.Postmark.Tests
             response.ErrorMessages.Should().BeEmpty();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailWithNameFromCode()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -110,7 +111,7 @@ namespace FluentEmail.Postmark.Tests
             response.ErrorMessages.Should().BeEmpty();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleHtmlMailFromCode()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -126,7 +127,7 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailWithAttachmentFromCode()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -150,7 +151,7 @@ namespace FluentEmail.Postmark.Tests
             response.ErrorMessages.Should().BeEmpty();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleHtmlMailWithAlternFromCode()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -167,7 +168,7 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailFromCodeWithOpts()
         {
             var opts = new PostmarkSenderOptions(apiKey);
@@ -188,7 +189,7 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailFromCodeWithLowPrio()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -205,7 +206,7 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailFromCodeWithHighPrio()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -222,7 +223,7 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task SimpleMailFromCodeWithHeaders()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);
@@ -240,28 +241,28 @@ namespace FluentEmail.Postmark.Tests
             response.Successful.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void SenderNullServerToken()
         {
             Func<PostmarkSender> fn = () => new PostmarkSender((string)null!);
             fn.Should().Throw<ArgumentNullException>();
         }
 
-        [Test]
+        [Fact]
         public void OptionsNullServerToken()
         {
             Func<PostmarkSenderOptions> fn = () => new PostmarkSenderOptions(null!);
             fn.Should().Throw<ArgumentNullException>();
         }
 
-        [Test]
+        [Fact]
         public void NullOptions()
         {
             Func<PostmarkSender> fn = () => new PostmarkSender((PostmarkSenderOptions)null!);
             fn.Should().Throw<ArgumentNullException>();
         }
 
-        [Test]
+        [Fact]
         public void SendNull()
         {
             var sender = new PostmarkSender(apiKey);
@@ -269,7 +270,7 @@ namespace FluentEmail.Postmark.Tests
             fn.Should().ThrowAsync<ArgumentNullException>();
         }
 
-        [Test]
+        [Fact]
         public async Task TooManyRecipients()
         {
             Email.DefaultSender = new PostmarkSender(apiKey);

@@ -4,11 +4,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FluentEmail.Core.Defaults;
 using FluentEmail.Core.Interfaces;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 
 namespace FluentEmail.Core.Tests
 {
-    [TestFixture]
     public class TemplateEmailTests
     {
         private Assembly ThisAssembly() => this.GetType().GetTypeInfo().Assembly;
@@ -16,7 +16,7 @@ namespace FluentEmail.Core.Tests
 		const string fromEmail = "johno@test.com";
 		const string subject = "sup dawg";
 
-		[Test]
+		[Fact]
 		public void Anonymous_Model_Template_From_File_Matches()
 		{
 			var email = Email
@@ -25,10 +25,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" });
 
-			Assert.AreEqual("yo email FLUENTEMAIL", email.Data.Body);
+			email.Data.Body.Should().Be("yo email FLUENTEMAIL");
 		}
 
-		[Test]
+		[Fact]
 		public void Using_Template_From_Not_Existing_Culture_File_Using_Default_Template()
 		{
 			var culture = new CultureInfo("fr-FR");
@@ -38,10 +38,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL", culture }, culture);
 
-			Assert.AreEqual("yo email FLUENTEMAIL", email.Data.Body);
+			email.Data.Body.Should().Be("yo email FLUENTEMAIL");
 		}
 
-		[Test]
+		[Fact]
 		public void Using_Template_From_Culture_File()
 		{
 			var culture = new CultureInfo("he-IL");
@@ -51,10 +51,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" }, culture);
 
-			Assert.AreEqual("hebrew email FLUENTEMAIL", email.Data.Body);
+			email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
 		}
 
-	    [Test]
+	    [Fact]
 	    public void Using_Template_From_Current_Culture_File()
 	    {
 	        var culture = new CultureInfo("he-IL");
@@ -64,10 +64,10 @@ namespace FluentEmail.Core.Tests
 	            .Subject(subject)
 	            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new {Test = "FLUENTEMAIL"}, culture);
 
-	        Assert.AreEqual("hebrew email FLUENTEMAIL", email.Data.Body);
+	        email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
 	    }
 
-	    [Test]
+	    [Fact]
 		public void Anonymous_Model_Template_Matches()
 		{
 			string template = "sup ##Name##";
@@ -78,12 +78,12 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplate(template, new { Name = "LUKE" });
 
-			Assert.AreEqual("sup LUKE", email.Data.Body);
+			email.Data.Body.Should().Be("sup LUKE");
 		}
 
 
 
-		[Test]
+		[Fact]
 		public void Set_Custom_Template()
 		{
 			string template = "sup ##Name## here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -95,10 +95,10 @@ namespace FluentEmail.Core.Tests
 				.UsingTemplateEngine(new TestTemplate())
 				.UsingTemplate(template, new { Name = "LUKE", Numbers = new string[] { "1", "2", "3" } });
 
-			Assert.AreEqual("custom template", email.Data.Body);
+			email.Data.Body.Should().Be("custom template");
 		}
 
-		[Test]
+		[Fact]
 		public void Using_Template_From_Embedded_Resource()
 		{
 			var email = Email
@@ -107,10 +107,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplateFromEmbedded("FluentEmail.Core.Tests.test-embedded.txt", new { Test = "EMBEDDEDTEST" }, ThisAssembly());
 
-			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
+			email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
 		}
 
-		[Test]
+		[Fact]
 		public void Using_Template_From_Root_Configured_Embedded_Resource()
 		{
 			EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests");
@@ -120,10 +120,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDEDTEST" });
 
-			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
+			email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
 		}
 		
-		[Test]
+		[Fact]
 		public void Using_Template_From_Configured_Embedded_Resource()
 		{
 			EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests.EmailTemplates");
@@ -133,10 +133,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDEDTEST" });
 
-			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
+			email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
 		}
 		
-		[Test]
+		[Fact]
 		public void New_Anonymous_Model_Template_From_File_Matches()
 		{
 			var email = new Email(fromEmail)
@@ -144,10 +144,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" });
 
-			Assert.AreEqual("yo email FLUENTEMAIL", email.Data.Body);
+			email.Data.Body.Should().Be("yo email FLUENTEMAIL");
 		}
 
-		[Test]
+		[Fact]
 		public void New_Using_Template_From_Not_Existing_Culture_File_Using_Default_Template()
 		{
 			var culture = new CultureInfo("fr-FR");
@@ -156,10 +156,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL", culture }, culture);
 
-			Assert.AreEqual("yo email FLUENTEMAIL", email.Data.Body);
+			email.Data.Body.Should().Be("yo email FLUENTEMAIL");
 		}
 
-		[Test]
+		[Fact]
 		public void New_Using_Template_From_Culture_File()
 		{
 			var culture = new CultureInfo("he-IL");
@@ -168,10 +168,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" }, culture);
 
-			Assert.AreEqual("hebrew email FLUENTEMAIL", email.Data.Body);
+			email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
 		}
 
-	    [Test]
+	    [Fact]
 	    public void New_Using_Template_From_Current_Culture_File()
 	    {
 	        var culture = new CultureInfo("he-IL");
@@ -180,12 +180,12 @@ namespace FluentEmail.Core.Tests
 	            .Subject(subject)
 	            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new {Test = "FLUENTEMAIL"}, culture);
 
-	        Assert.AreEqual("hebrew email FLUENTEMAIL", email.Data.Body);
+	        email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
 	    }
 
 
 
-		[Test]
+		[Fact]
 		public void New_Set_Custom_Template()
 		{
 			string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -195,10 +195,10 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplate(template, new { Name = "LUKE", Numbers = new string[] { "1", "2", "3" } });
 
-			Assert.AreEqual("custom template", email.Data.Body);
+			email.Data.Body.Should().Be("custom template");
 		}
 
-		[Test]
+		[Fact]
 		public void New_Using_Template_From_Embedded_Resource()
 		{
 			var email = new Email(fromEmail)
@@ -206,7 +206,7 @@ namespace FluentEmail.Core.Tests
 				.Subject(subject)
 				.UsingTemplateFromEmbedded("FluentEmail.Core.Tests.test-embedded.txt", new { Test = "EMBEDDEDTEST" }, ThisAssembly());
 
-			Assert.AreEqual("yo email EMBEDDEDTEST", email.Data.Body);
+			email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
 		}		
 	}
 

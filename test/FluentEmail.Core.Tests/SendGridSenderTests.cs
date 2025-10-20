@@ -1,5 +1,6 @@
 ﻿using FluentEmail.Core;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace FluentEmail.SendGrid.Tests
         const string fromEmail = "test@fluentmail.com";
         const string fromName = "SendGridSender Test";
 
-        [SetUp]
+        // SetUp converted to constructor - needs manual review
         public void SetUp()
         {
             if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("SendGrid Api Key needs to be supplied");
@@ -25,7 +26,7 @@ namespace FluentEmail.SendGrid.Tests
             Email.DefaultSender = sender;
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendEmail()
         {
             const string subject = "SendMail Test";
@@ -39,10 +40,10 @@ namespace FluentEmail.SendGrid.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendTemplateEmail()
         {
             const string subject = "SendMail Test";
@@ -60,10 +61,10 @@ namespace FluentEmail.SendGrid.Tests
 
             var response = await email.SendWithTemplateAsync(templateId, templateData);
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendEmailWithReplyTo()
         {
             const string subject = "SendMail Test";
@@ -78,10 +79,10 @@ namespace FluentEmail.SendGrid.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendEmailWithCategory()
         {
             const string subject = "SendMail Test";
@@ -97,10 +98,10 @@ namespace FluentEmail.SendGrid.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendEmailWithAttachments()
         {
             const string subject = "SendMail With Attachments Test";
@@ -125,11 +126,11 @@ namespace FluentEmail.SendGrid.Tests
 
                 var response = await email.SendAsync();
 
-                Assert.IsTrue(response.Successful);
+                (response.Successful).Should().BeTrue();
             }
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendHighPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -144,10 +145,10 @@ namespace FluentEmail.SendGrid.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendLowPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -162,10 +163,10 @@ namespace FluentEmail.SendGrid.Tests
 
             var response = await email.SendAsync();
 
-            Assert.IsTrue(response.Successful);
+            (response.Successful).Should().BeTrue();
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Fact(Skip="No sendgrid credentials")]
         public async Task CanSendEmailWithInlineAttachments()
         {
             // Arrange
@@ -194,7 +195,7 @@ namespace FluentEmail.SendGrid.Tests
                 var response = await email.SendAsync();
                 
                 // Assert
-                Assert.IsTrue(response.Successful);
+                (response.Successful).Should().BeTrue();
             }
         }
     }

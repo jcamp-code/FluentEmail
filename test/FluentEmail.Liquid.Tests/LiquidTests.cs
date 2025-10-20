@@ -12,7 +12,8 @@ using Fluid.Ast;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 
 namespace FluentEmail.Liquid.Tests
 {
@@ -22,8 +23,7 @@ namespace FluentEmail.Liquid.Tests
         private const string FromEmail = "johno@test.com";
         private const string Subject = "sup dawg";
 
-        [SetUp]
-        public void SetUp()
+        public LiquidTests()
         {
             // default to have no file provider, only required when layout files are in use
             SetupRenderer();
@@ -43,7 +43,7 @@ namespace FluentEmail.Liquid.Tests
             Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
         }
 
-        [Test]
+        [Fact]
         public void Model_With_List_Template_Matches()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -54,10 +54,10 @@ namespace FluentEmail.Liquid.Tests
                 .Subject(Subject)
                 .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
-            Assert.AreEqual("sup LUKE here is a list 123", email.Data.Body);
+            email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
 
-        [Test]
+        [Fact]
         public void Custom_Context_Values()
         {
             SetupRenderer(new NullFileProvider(), (context, model) =>
@@ -74,11 +74,11 @@ namespace FluentEmail.Liquid.Tests
                 .Subject(Subject)
                 .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
-            Assert.AreEqual("sup Samantha here is a list 321", email.Data.Body);
+            email.Data.Body.Should().Be("sup Samantha here is a list 321");
         }
 
         // currently not cached as Fluid is so fast, but can be added later
-        [Test]
+        [Fact]
         public void Reuse_Cached_Templates()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -92,7 +92,7 @@ namespace FluentEmail.Liquid.Tests
                     .Subject(Subject)
                     .UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
 
-                Assert.AreEqual("sup " + i + " here is a list 123", email.Data.Body);
+                email.Data.Body.Should().Be("sup " + i + " here is a list 123");
 
                 var email2 = Email
                     .From(FromEmail)
@@ -100,11 +100,11 @@ namespace FluentEmail.Liquid.Tests
                     .Subject(Subject)
                     .UsingTemplate(template2, new ViewModel { Name = i.ToString() });
 
-                Assert.AreEqual("sup " + i + " this is the second template", email2.Data.Body);
+                email2.Data.Body.Should().Be("sup " + i + " this is the second template");
             }
         }
 
-        [Test]
+        [Fact]
         public void New_Model_Template_Matches()
         {
             const string template = "sup {{ Name }}";
@@ -114,10 +114,10 @@ namespace FluentEmail.Liquid.Tests
                 .Subject(Subject)
                 .UsingTemplate(template, new ViewModel { Name = "LUKE" });
 
-            Assert.AreEqual("sup LUKE", email.Data.Body);
+            email.Data.Body.Should().Be("sup LUKE");
         }
 
-        [Test]
+        [Fact]
         public void New_Model_With_List_Template_Matches()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -127,11 +127,11 @@ namespace FluentEmail.Liquid.Tests
                 .Subject(Subject)
                 .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
-            Assert.AreEqual("sup LUKE here is a list 123", email.Data.Body);
+            email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
 
         // currently not cached as Fluid is so fast, but can be added later
-        [Test]
+        [Fact]
         public void New_Reuse_Cached_Templates()
         {
             const string template = "sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
@@ -144,18 +144,18 @@ namespace FluentEmail.Liquid.Tests
                     .Subject(Subject)
                     .UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
 
-                Assert.AreEqual("sup " + i + " here is a list 123", email.Data.Body);
+                email.Data.Body.Should().Be("sup " + i + " here is a list 123");
 
                 var email2 = new Email(FromEmail)
                     .To(ToEmail)
                     .Subject(Subject)
                     .UsingTemplate(template2, new ViewModel { Name = i.ToString() });
 
-                Assert.AreEqual("sup " + i + " this is the second template", email2.Data.Body);
+                email2.Data.Body.Should().Be("sup " + i + " this is the second template");
             }
         }
 
-	    [Test]
+	    [Fact]
 	    public void Should_be_able_to_use_project_layout()
 	    {
             SetupRenderer(new PhysicalFileProvider(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory!.FullName, "EmailTemplates")));
@@ -168,10 +168,10 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
 			    .Subject(Subject)
 			    .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
-		    Assert.AreEqual($"<h1>Hello!</h1>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>", email.Data.Body);
+		    email.Data.Body.Should().Be($"<h1>Hello!</h1>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
 	    }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_use_embedded_layout()
         {
             SetupRenderer(new EmbeddedFileProvider(typeof(LiquidTests).Assembly, "FluentEmail.Liquid.Tests.EmailTemplates"));
@@ -184,10 +184,10 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
                 .Subject(Subject)
                 .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
 
-            Assert.AreEqual($"<h2>Hello!</h2>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>", email.Data.Body);
+            email.Data.Body.Should().Be($"<h2>Hello!</h2>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_configure_parser()
         {
             SetupRenderer(
@@ -203,7 +203,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
                 .Subject(Subject)
                 .UsingTemplate(template, new ViewModel { Name = "LUKE" });
 
-            Assert.AreEqual("sup LUKE here is a custom tag: Hello from custom tag test", email.Data.Body);
+            email.Data.Body.Should().Be("sup LUKE here is a custom tag: Hello from custom tag test");
 
             static async ValueTask<Completion> TestTag(Expression pathExpression, TextWriter writer, TextEncoder encoder, TemplateContext context)
             {

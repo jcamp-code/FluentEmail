@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using FluentEmail.Core.Models;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 
 namespace FluentEmail.Core.Tests
 {
-    [TestFixture]
     public class AttachmentTests
     {
         private Assembly ThisAssembly() => this.GetType().GetTypeInfo().Assembly;
@@ -14,7 +14,7 @@ namespace FluentEmail.Core.Tests
         const string fromEmail = "johno@test.com";
         const string subject = "sup dawg";
 
-        [Test]
+        [Fact]
         public void Attachment_from_stream_Is_set()
         {
             using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}"))
@@ -31,11 +31,11 @@ namespace FluentEmail.Core.Tests
                     .Subject(subject)
                     .Attach(attachment);
 
-                Assert.AreEqual(20, email.Data.Attachments.First().Data.Length);
+                email.Data.Attachments.First().Data.Length.Should().Be(20);
             }
         }
 
-        [Test]
+        [Fact]
         public void Attachment_from_filename_Is_set()
         {
             var email = Email.From(fromEmail)
@@ -43,10 +43,10 @@ namespace FluentEmail.Core.Tests
                 .Subject(subject)
                 .AttachFromFilename($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", "text/plain");
 
-            Assert.AreEqual(20, email.Data.Attachments.First().Data.Length);
+            email.Data.Attachments.First().Data.Length.Should().Be(20);
         }
 
-        [Test]
+        [Fact]
         public void Attachment_from_filename_AttachmentName_Is_set()
         {
             var attachmentName = "attachment.txt";
@@ -55,8 +55,8 @@ namespace FluentEmail.Core.Tests
                 .Subject(subject)
                 .AttachFromFilename($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", "text/plain", attachmentName);
 
-            Assert.AreEqual(20, email.Data.Attachments.First().Data.Length);
-            Assert.AreEqual(attachmentName, email.Data.Attachments.First().Filename);
+            email.Data.Attachments.First().Data.Length.Should().Be(20);
+            email.Data.Attachments.First().Filename.Should().Be(attachmentName);
         }
     }
 }

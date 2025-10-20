@@ -1,25 +1,25 @@
 ﻿using FluentEmail.Core.Defaults;
 using FluentEmail.Core.Interfaces;
 using FluentEmail.Core.Models;
-using NUnit.Framework;
+using Xunit;
+using FluentAssertions;
 
 namespace FluentEmail.Core.Tests
 {
-    [TestFixture]
     public class ReplaceRendererTest
     {
-        [Test]
+        [Fact]
         public void ModelPropertyValueIsNull_Test()
         {
             ITemplateRenderer templateRenderer = new ReplaceRenderer();
 
             var address = new Address("james@test.com", "james");
-            Assert.True(address.Name == "james");
+            address.Name.Should().Be("james");
             var template = "this is name: ##Name##";
-            Assert.True("this is name: james" == templateRenderer.Parse(template, address));
+            templateRenderer.Parse(template, address).Should().Be("this is name: james");
 
             address.Name = null;
-            Assert.True("this is name: " == templateRenderer.Parse(template, address));
+            templateRenderer.Parse(template, address).Should().Be("this is name: ");
         }
     }
 }
