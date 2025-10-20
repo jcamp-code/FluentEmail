@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentEmail.Core;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Smtp.Tests

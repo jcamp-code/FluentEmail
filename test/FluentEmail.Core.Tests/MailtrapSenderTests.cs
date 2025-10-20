@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace FluentEmail.Mailtrap.Tests
 {

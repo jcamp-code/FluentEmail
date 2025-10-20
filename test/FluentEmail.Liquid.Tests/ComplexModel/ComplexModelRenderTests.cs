@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using FluentEmail.Core;
 using Fluid;
 using Microsoft.Extensions.FileProviders;

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentEmail.Core;
 using FluentEmail.MailKitSmtp;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.MailKit.Tests

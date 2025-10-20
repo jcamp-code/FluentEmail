@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FluentEmail.Core.Defaults;
 using FluentEmail.Core.Interfaces;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests
 {

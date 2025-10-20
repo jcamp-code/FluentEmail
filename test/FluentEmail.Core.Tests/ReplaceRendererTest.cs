@@ -2,7 +2,7 @@
 using FluentEmail.Core.Interfaces;
 using FluentEmail.Core.Models;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests
 {

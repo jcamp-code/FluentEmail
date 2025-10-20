@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using FluentEmail.Core.Models;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests
 {

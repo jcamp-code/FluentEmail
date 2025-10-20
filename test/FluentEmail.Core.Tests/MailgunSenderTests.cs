@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 
 namespace FluentEmail.Mailgun.Tests

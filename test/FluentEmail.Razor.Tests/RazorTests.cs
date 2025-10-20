@@ -1,6 +1,6 @@
 ﻿using FluentEmail.Core;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using System;
 using System.Dynamic;
 using System.IO;

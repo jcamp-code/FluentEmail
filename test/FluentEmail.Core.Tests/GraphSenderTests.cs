@@ -1,7 +1,7 @@
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using System;
 using System.IO;
 using System.Threading.Tasks;

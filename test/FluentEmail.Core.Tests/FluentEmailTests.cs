@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FluentEmail.Core.Models;
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using System.Linq;
 
 namespace FluentEmail.Core.Tests
