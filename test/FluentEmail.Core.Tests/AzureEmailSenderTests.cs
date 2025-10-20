@@ -7,7 +7,7 @@ using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Azure.Email.Tests
 {
-    // Note: XUnit runs tests in parallel by default. Use Collection attribute if sequential execution is needed.
+    [Collection("NonParallel")]
     public class AzureEmailSenderTests
     {
         const string connectionString = ""; // TODO: Put your ConnectionString here
@@ -17,8 +17,7 @@ namespace FluentEmail.Azure.Email.Tests
         const string fromEmail = "test@fluentmail.com"; // TODO: Put a valid/verified sender here
         const string fromName = "AzureEmailSender Test";
 
-        // SetUp converted to constructor - needs manual review
-        public void SetUp()
+        public AzureEmailSenderTests()
         {
             if (string.IsNullOrWhiteSpace(connectionString)) throw new ArgumentException("Azure Communication Services Connection String needs to be supplied");
 

@@ -23,11 +23,7 @@ namespace FluentEmail.MailKit.Tests
         public MailKitSmtpSenderTests()
         {
             tempDirectory = Path.Combine(Path.GetTempPath(), "EmailTest");
-        }
-
-        // SetUp converted to constructor - needs manual review
-        public void SetUp()
-        {
+            
             var sender = new MailKitSender(new SmtpClientOptions
             {
                 Server = "localhost",

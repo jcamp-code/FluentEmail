@@ -30,11 +30,7 @@ namespace FluentEmail.Smtp.Tests
         public SmtpSenderTests()
         {
             tempDirectory = Path.Combine(Path.GetTempPath(), "EmailTest");
-        }
-
-        // SetUp converted to constructor - needs manual review
-        public void SetUp()
-        {
+            
             var sender = new SmtpSender(() => new SmtpClient("localhost")
             {
                 EnableSsl = false,

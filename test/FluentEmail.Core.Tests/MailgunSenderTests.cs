@@ -15,8 +15,7 @@ namespace FluentEmail.Mailgun.Tests
         const string subject = "Attachment Tests";
         const string body = "This email is testing the attachment functionality of MailGun.";
 
-        // SetUp converted to constructor - needs manual review
-        public void SetUp()
+        public MailgunSenderTests()
         {
             var sender = new MailgunSender("<name>", "<key>");
             Email.DefaultSender = sender;

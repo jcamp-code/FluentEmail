@@ -17,8 +17,7 @@ namespace FluentEmail.SendGrid.Tests
         const string fromEmail = "test@fluentmail.com";
         const string fromName = "SendGridSender Test";
 
-        // SetUp converted to constructor - needs manual review
-        public void SetUp()
+        public SendGridSenderTests()
         {
             if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("SendGrid Api Key needs to be supplied");
 

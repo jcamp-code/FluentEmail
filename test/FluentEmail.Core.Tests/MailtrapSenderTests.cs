@@ -16,8 +16,8 @@ namespace FluentEmail.Mailtrap.Tests
         const string username = ""; // Mailtrap SMTP inbox username
         const string password = ""; // Mailtrap SMTP inbox password
         const string templateid = "";
-        // SetUp converted to constructor - needs manual review
-        public void SetUp()
+        
+        public MailtrapSenderTests()
         {
             var sender = new MailtrapSender(username, password, "send.api.mailtrap.io", 587);
             Email.DefaultSender = sender;
