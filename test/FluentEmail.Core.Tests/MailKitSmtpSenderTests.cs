@@ -4,7 +4,7 @@ using FluentEmail.MailKitSmtp;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Xunit;
+using TUnit.Core;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests;
@@ -47,7 +47,7 @@ public class MailKitSmtpSenderTests
         }
     }
 
-    [Fact]
+    [Test]
     public void CanSendEmail()
     {
         var email = Email
@@ -66,7 +66,7 @@ public class MailKitSmtpSenderTests
         DeleteTemp(s);
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
         var stream = new MemoryStream();
@@ -100,8 +100,8 @@ public class MailKitSmtpSenderTests
         DeleteTemp(s);
     }
 
-    [Theory]
-    [InlineData("logotest.png")]
+    [Test]
+    [Arguments("logotest.png")]
     public async Task CanSendEmailWithInlineImages(string contentId = null)
     {
         using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
@@ -133,7 +133,7 @@ public class MailKitSmtpSenderTests
         }
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithInlineImagesAndAttachmentTogether()
     {
         var attachmentStream = new MemoryStream();
@@ -180,7 +180,7 @@ public class MailKitSmtpSenderTests
         DeleteTemp(s);
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendAsyncHtmlAndPlaintextTogether()
     {
         var email = Email
@@ -196,7 +196,7 @@ public class MailKitSmtpSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CanSendHtmlAndPlaintextTogether()
     {
         var email = Email

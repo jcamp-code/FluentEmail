@@ -4,7 +4,7 @@ using FluentEmail.Core.Models;
 using FluentEmail.Graph;
 using System.IO;
 using System.Threading.Tasks;
-using Xunit;
+using TUnit.Core;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -29,10 +29,10 @@ public class GraphSenderTests
         Sender = new GraphSender(_appId, _tenantId, _graphSecret, SaveSent);
     }
 
-    [Fact]
+    [Test]
     public void CanSendEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
         
         var email = Email
             .From(_senderEmail)
@@ -45,10 +45,10 @@ public class GraphSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailAsync()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
         
         var email = Email
             .From(_senderEmail)
@@ -61,10 +61,10 @@ public class GraphSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
@@ -91,10 +91,10 @@ public class GraphSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendHighPriorityEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_appId), "No Graph/AD Credentials");
+        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
         
         var email = Email
             .From(_senderEmail)

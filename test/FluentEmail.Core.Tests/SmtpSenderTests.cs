@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AwesomeAssertions;
 using FluentEmail.Core.Interfaces;
 using FluentEmail.Smtp;
-using Xunit;
+using TUnit.Core;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests;
@@ -53,7 +53,7 @@ public class SmtpSenderTests
     }
 
 
-    [Fact]
+    [Test]
     public void CanSendEmail()
     {
         var email = TestEmail
@@ -70,7 +70,7 @@ public class SmtpSenderTests
 
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
         var stream = new MemoryStream();
@@ -101,7 +101,7 @@ public class SmtpSenderTests
 
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendAsyncHtmlAndPlaintextTogether()
     {
         var email = TestEmail
@@ -117,7 +117,7 @@ public class SmtpSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CanSendHtmlAndPlaintextTogether()
     {
         var email = TestEmail
@@ -133,7 +133,7 @@ public class SmtpSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CancelSendIfCancelationRequested()
     {
         var email = TestEmail;

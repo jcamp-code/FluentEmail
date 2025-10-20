@@ -4,7 +4,7 @@ using FluentEmail.Core.Models;
 using FluentEmail.Mailtrap;
 using System.IO;
 using System.Threading.Tasks;
-using Xunit;
+using TUnit.Core;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -30,10 +30,10 @@ public class MailtrapSenderTests
         if (!string.IsNullOrEmpty(_username)) Sender = new MailtrapSender(_username, _password, _host, _port);
     }
 
-    [Fact]
+    [Test]
     public void CanSendEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
+        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
         
         var email = Email
             .From(_fromEmail)
@@ -48,10 +48,10 @@ public class MailtrapSenderTests
     }
 
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailAsync()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
+        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
         
         var email = Email
             .From(_fromEmail)
@@ -65,10 +65,10 @@ public class MailtrapSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
+        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
@@ -96,10 +96,10 @@ public class MailtrapSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithInlineImages()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_password), "No Mailtrap Credentials");
+        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
         
         using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
         {
@@ -126,10 +126,10 @@ public class MailtrapSenderTests
         }
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithTemplate()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailtrap Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailtrap Credentials
         
         var email = Email.From(_fromEmail).To(_toEmail);
         email.Sender = new MailtrapSender(_username, _apiKey, _host, 587, _apiHost);

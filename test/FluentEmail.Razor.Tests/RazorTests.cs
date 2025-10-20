@@ -1,5 +1,5 @@
 ﻿using FluentEmail.Core;
-using Xunit;
+using TUnit.Core;
 using AwesomeAssertions;
 using System;
 using System.Dynamic;
@@ -13,7 +13,7 @@ namespace FluentEmail.Razor.Tests
         const string fromEmail = "johno@test.com";
         const string subject = "sup dawg";
 
-        [Fact]
+        [Test]
         public void Anonymous_Model_With_List_Template_Matches()
         {
             string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -29,7 +29,7 @@ namespace FluentEmail.Razor.Tests
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
 
-        [Fact]
+        [Test]
         public void Reuse_Cached_Templates()
         {
             string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -59,7 +59,7 @@ namespace FluentEmail.Razor.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void New_Anonymous_Model_Template_Matches()
         {
             string template = "sup @Model.Name";
@@ -75,7 +75,7 @@ namespace FluentEmail.Razor.Tests
             email.Data.Body.Should().Be("sup LUKE");
         }
 
-        [Fact]
+        [Test]
         public void New_Anonymous_Model_With_List_Template_Matches()
         {
             string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -91,7 +91,7 @@ namespace FluentEmail.Razor.Tests
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
 
-        [Fact]
+        [Test]
         public void New_Reuse_Cached_Templates()
         {
             string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -122,7 +122,7 @@ namespace FluentEmail.Razor.Tests
         }
 
 
-	    [Fact]
+	    [Test]
 	    public void Should_be_able_to_use_project_layout_with_viewbag()
 	    {
 		    var projectRoot = Directory.GetCurrentDirectory();
@@ -147,7 +147,7 @@ sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
 		    email.Data.Body.Should().Be($"<h1>Hello!</h1>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
 	    }
 
-	    [Fact]
+	    [Test]
 	    public void Should_be_able_to_use_embedded_layout_with_viewbag()
 	    {
 		    string template = @"

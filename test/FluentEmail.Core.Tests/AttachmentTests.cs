@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using FluentEmail.Core.Models;
-using Xunit;
+using TUnit.Core;
 using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
@@ -14,7 +14,7 @@ public class AttachmentTests
     private const string FromEmail = "johno@test.com";
     private const string Subject = "sup dawg";
 
-    [Fact]
+    [Test]
     public void Attachment_from_stream_Is_set()
     {
         using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}"))
@@ -35,7 +35,7 @@ public class AttachmentTests
         }
     }
 
-    [Fact]
+    [Test]
     public void Attachment_from_filename_Is_set()
     {
         var email = Email.From(FromEmail)
@@ -46,7 +46,7 @@ public class AttachmentTests
         email.Data.Attachments.First().Data.Length.Should().Be(20);
     }
 
-    [Fact]
+    [Test]
     public void Attachment_from_filename_AttachmentName_Is_set()
     {
         var attachmentName = "attachment.txt";

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
+using TUnit.Core;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -28,10 +28,10 @@ public class PostmarkSenderTests
         if (!string.IsNullOrEmpty(_apiKey)) Sender = new PostmarkSender(_apiKey);
     }
 
-    [Fact]
+    [Test]
     public void SimpleMailFromCodeSync()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
 
         var email = Email
             .From(_fromEmail, FromName)
@@ -46,10 +46,10 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailFromCode()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
 
         Email.DefaultSender = new PostmarkSender(_apiKey);
 
@@ -68,10 +68,10 @@ public class PostmarkSenderTests
         response.ErrorMessages.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailFromCodeWithAddressesWithPlus()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
 
         var email = Email
             .From(_fromEmailHash)
@@ -88,10 +88,10 @@ public class PostmarkSenderTests
         response.ErrorMessages.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailReplyTo()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
 
         var email = Email
             .From(_fromEmail)
@@ -108,10 +108,10 @@ public class PostmarkSenderTests
         response.ErrorMessages.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailWithNameFromCode()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         var email = Email
             .From(_fromEmail, FromName)
@@ -127,10 +127,10 @@ public class PostmarkSenderTests
         response.ErrorMessages.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleHtmlMailFromCode()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         Email.DefaultSender = new PostmarkSender(_apiKey);
 
@@ -146,10 +146,10 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailWithAttachmentFromCode()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         Email.DefaultSender = new PostmarkSender(_apiKey);
 
@@ -173,10 +173,10 @@ public class PostmarkSenderTests
         response.ErrorMessages.Should().BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleHtmlMailWithAlternateFromCode()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         Email.DefaultSender = new PostmarkSender(_apiKey);
 
@@ -193,10 +193,10 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailFromCodeWithOpts()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         var opts = new PostmarkSenderOptions(_apiKey)
         {
@@ -219,10 +219,10 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailFromCodeWithLowPrio()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
 
         var email = Email
             .From(_fromEmail, FromName)
@@ -237,10 +237,10 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailFromCodeWithHighPrio()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
 
         var email = Email
             .From(_fromEmail, FromName)
@@ -255,10 +255,10 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task SimpleMailFromCodeWithHeaders()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         var email = Email
             .From(_fromEmail, FromName)
@@ -274,43 +274,43 @@ public class PostmarkSenderTests
         response.Successful.Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void SenderNullServerToken()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         Func<PostmarkSender> fn = () => new PostmarkSender((string)null!);
         fn.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void OptionsNullServerToken()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         Func<PostmarkSenderOptions> fn = () => new PostmarkSenderOptions(null!);
         fn.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void NullOptions()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         Func<PostmarkSender> fn = () => new PostmarkSender((PostmarkSenderOptions)null!);
         fn.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void SendNull()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         var sender = new PostmarkSender(_apiKey);
         Func<Task> fn = async () => await sender.SendAsync(null!).ConfigureAwait(false);
         fn.Should().ThrowAsync<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public async Task TooManyRecipients()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Postmark Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Postmark Credentials
         
         var email = Email
             .From(_fromEmail, FromName)

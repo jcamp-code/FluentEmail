@@ -3,7 +3,7 @@ using FluentEmail.Core.Interfaces;
 using FluentEmail.SendGrid;
 using System.IO;
 using System.Threading.Tasks;
-using Xunit;
+using TUnit.Core;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
@@ -24,10 +24,10 @@ public class SendGridSenderTests
         if (!string.IsNullOrEmpty(_apiKey)) Sender = new SendGridSender(_apiKey, true);
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
             
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of SendGrid Sender.";
@@ -45,10 +45,10 @@ public class SendGridSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendTemplateEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         const string subject = "SendMail Test";
         var templateId = Credentials.SendGrid.Template;
@@ -70,10 +70,10 @@ public class SendGridSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithReplyTo()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail with ReplyTo functionality of SendGrid Sender.";
@@ -92,10 +92,10 @@ public class SendGridSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithCategory()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail with Categories functionality of SendGrid Sender.";
@@ -115,10 +115,10 @@ public class SendGridSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         const string subject = "SendMail With Attachments Test";
         const string body = "This email is testing the attachment functionality of SendGrid Sender.";
@@ -147,10 +147,10 @@ public class SendGridSenderTests
         }
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendHighPriorityEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of SendGrid Sender.";
@@ -169,10 +169,10 @@ public class SendGridSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendLowPriorityEmail()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of SendGrid Sender.";
@@ -191,10 +191,10 @@ public class SendGridSenderTests
         (response.Successful).Should().BeTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task CanSendEmailWithInlineAttachments()
     {
-        Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No SendGrid Credentials");
+        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
         
         // Arrange
         const string subject = "SendMail With Inline Attachments Test";

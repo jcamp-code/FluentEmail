@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FluentEmail.Core.Defaults;
 using FluentEmail.Core.Interfaces;
-using Xunit;
+using TUnit.Core;
 using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
@@ -16,7 +16,7 @@ public class TemplateEmailTests
     private const string FromEmail = "johno@test.com";
     private const string Subject = "sup dawg";
 
-    [Fact]
+    [Test]
     public void Anonymous_Model_Template_From_File_Matches()
     {
         var email = Email
@@ -28,7 +28,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void Using_Template_From_Not_Existing_Culture_File_Using_Default_Template()
     {
         var culture = new CultureInfo("fr-FR");
@@ -41,7 +41,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void Using_Template_From_Culture_File()
     {
         var culture = new CultureInfo("he-IL");
@@ -54,7 +54,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void Using_Template_From_Current_Culture_File()
     {
         var culture = new CultureInfo("he-IL");
@@ -67,7 +67,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void Anonymous_Model_Template_Matches()
     {
         string template = "sup ##Name##";
@@ -83,7 +83,7 @@ public class TemplateEmailTests
 
 
 
-    [Fact]
+    [Test]
     public void Set_Custom_Template()
     {
         string template = "sup ##Name## here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -98,7 +98,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("custom template");
     }
 
-    [Fact]
+    [Test]
     public void Using_Template_From_Embedded_Resource()
     {
         var email = Email
@@ -110,10 +110,10 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
     }
 
-    [Fact]
+    [Test]
     public void Using_Template_From_Root_Configured_Embedded_Resource()
     {
-        EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests");
+        EmbeddedTemplates.Configure(System.Reflection.Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests");
         var email = Email
             .From(FromEmail)
             .To(ToEmail)
@@ -123,10 +123,10 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
     }
 		
-    [Fact]
+    [Test]
     public void Using_Template_From_Configured_Embedded_Resource()
     {
-        EmbeddedTemplates.Configure(Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests.EmailTemplates");
+        EmbeddedTemplates.Configure(System.Reflection.Assembly.GetExecutingAssembly(), "FluentEmail.Core.Tests.EmailTemplates");
         var email = Email
             .From(FromEmail)
             .To(ToEmail)
@@ -136,7 +136,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
     }
 		
-    [Fact]
+    [Test]
     public void New_Anonymous_Model_Template_From_File_Matches()
     {
         var email = new Email(FromEmail)
@@ -147,7 +147,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void New_Using_Template_From_Not_Existing_Culture_File_Using_Default_Template()
     {
         var culture = new CultureInfo("fr-FR");
@@ -159,7 +159,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("yo email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void New_Using_Template_From_Culture_File()
     {
         var culture = new CultureInfo("he-IL");
@@ -171,7 +171,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
     }
 
-    [Fact]
+    [Test]
     public void New_Using_Template_From_Current_Culture_File()
     {
         var culture = new CultureInfo("he-IL");
@@ -185,7 +185,7 @@ public class TemplateEmailTests
 
 
 
-    [Fact]
+    [Test]
     public void New_Set_Custom_Template()
     {
         string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
@@ -198,7 +198,7 @@ public class TemplateEmailTests
         email.Data.Body.Should().Be("custom template");
     }
 
-    [Fact]
+    [Test]
     public void New_Using_Template_From_Embedded_Resource()
     {
         var email = new Email(FromEmail)

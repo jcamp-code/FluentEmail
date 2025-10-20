@@ -1,11 +1,11 @@
-﻿using Xunit;
+﻿using TUnit.Core;
 using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
 
 public class AddressTests
 {
-    [Fact]
+    [Test]
     public void SplitAddress_Test()
     {
         var email = Email
@@ -19,7 +19,7 @@ public class AddressTests
         email.Data.ToAddresses[1].Name.Should().Be("John 2");
     }
 
-    [Fact]
+    [Test]
     public void SplitAddress_Test2()
     {
         var email = Email
@@ -33,7 +33,7 @@ public class AddressTests
         email.Data.ToAddresses[1].Name.Should().Be(string.Empty);
     }
 
-    [Fact]
+    [Test]
     public void SplitAddress_Test3()
     {
         var email = Email
@@ -49,7 +49,7 @@ public class AddressTests
         email.Data.ToAddresses[2].Name.Should().Be("Fred");
     }
 
-    [Fact]
+    [Test]
     public void SetFromAddress()
     {
         var email = new Email();
@@ -60,7 +60,7 @@ public class AddressTests
     }
 
     #region Refactored tests using setup through constructor.
-    [Fact]
+    [Test]
     public void New_SplitAddress_Test()
     {
         var email = new Email()
@@ -74,7 +74,7 @@ public class AddressTests
     }
 
 
-    [Fact]
+    [Test]
     public void New_SplitAddress_Test2()
     {
         var email = new Email()
@@ -88,7 +88,7 @@ public class AddressTests
     }
 
 
-    [Fact]
+    [Test]
     public void New_SplitAddress_Test3()
     {
         var email = new Email()

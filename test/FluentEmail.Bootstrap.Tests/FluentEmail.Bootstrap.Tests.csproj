@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
-    <PackageReference Include="Verify.XunitV3" Version="31.0.2" />
+    <PackageReference Include="Verify.TUnit" Version="31.0.2" />
   </ItemGroup>
 
 </Project>
