@@ -9,8 +9,8 @@ using Fluid;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Xunit;
-using VerifyXunit;
 using VerifyTests;
+using VerifyXunit;
 
 namespace FluentEmail.Bootstrap.Tests;
 
