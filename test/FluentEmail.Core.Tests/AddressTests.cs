@@ -1,7 +1,4 @@
-﻿using Xunit;
-using AwesomeAssertions;
-
-namespace FluentEmail.Core.Tests;
+﻿namespace FluentEmail.Core.Tests;
 
 public class AddressTests
 {

@@ -1,10 +1,4 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
 using FluentEmail.SendGrid;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
-using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -17,7 +11,7 @@ public class SendGridSenderTests
     private const string ToName = "FluentEmail Test";
     private const string FromName = "SendGridSender Test";
 
-    private ISender Sender { get; set; }
+    private ISender Sender { get; }
 
     public SendGridSenderTests()
     {
@@ -123,28 +117,27 @@ public class SendGridSenderTests
         const string subject = "SendMail With Attachments Test";
         const string body = "This email is testing the attachment functionality of SendGrid Sender.";
 
-        using (var stream = File.OpenRead($"{Directory.GetCurrentDirectory()}/test-binary.xlsx"))
+        await using var stream = File.OpenRead($"{Directory.GetCurrentDirectory()}/test-binary.xlsx");
+        var attachment = new Attachment
         {
-            var attachment = new Attachment
-            {
-                Data = stream,
-                ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                Filename = "test-binary.xlsx"
-            };
+            Data = stream,
+            // ReSharper disable twice StringLiteralTypo
+            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Filename = "test-binary.xlsx"
+        };
 
-            var email = Email
-                .From(_fromEmail, FromName)
-                .To(_toEmail, ToName)
-                .Subject(subject)
-                .Body(body)
-                .Attach(attachment);
+        var email = Email
+            .From(_fromEmail, FromName)
+            .To(_toEmail, ToName)
+            .Subject(subject)
+            .Body(body)
+            .Attach(attachment);
             
-            email.Sender = Sender;
+        email.Sender = Sender;
 
-            var response = await email.SendAsync();
+        var response = await email.SendAsync();
 
-            (response.Successful).Should().BeTrue();
-        }
+        (response.Successful).Should().BeTrue();
     }
 
     [Fact]
@@ -200,28 +193,26 @@ public class SendGridSenderTests
         const string subject = "SendMail With Inline Attachments Test";
         const string body = "This email is testing the inline attachment functionality of SendGrid Sender.";
 
-        using (var stream = File.OpenRead($"{Directory.GetCurrentDirectory()}/logotest.png"))
+        await using var stream = File.OpenRead($"{Directory.GetCurrentDirectory()}/logotest.png");
+        var attachment = new Attachment
         {
-            var attachment = new Attachment
-            {
-                Data = stream,
-                ContentType = "image/png",
-                Filename = "logotest.png",
-                IsInline = true,
-                ContentId = "logotest_id"
-            };
+            Data = stream,
+            ContentType = "image/png",
+            Filename = "logotest.png",
+            IsInline = true,
+            ContentId = "logotest_id"
+        };
 
-            var email = Email
-                .From(_fromEmail, FromName)
-                .To(_toEmail, ToName)
-                .Subject(subject)
-                .Body(body)
-                .Attach(attachment);
+        var email = Email
+            .From(_fromEmail, FromName)
+            .To(_toEmail, ToName)
+            .Subject(subject)
+            .Body(body)
+            .Attach(attachment);
 
-            email.Sender = Sender;
-            var response = await email.SendAsync();
+        email.Sender = Sender;
+        var response = await email.SendAsync();
             
-            (response.Successful).Should().BeTrue();
-        }
+        (response.Successful).Should().BeTrue();
     }
 }

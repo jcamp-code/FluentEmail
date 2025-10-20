@@ -56,7 +56,7 @@ public class BootstrapTests
             }
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } })
+            .UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = ["1", "2", "3"] })
             .CompileBootstrap();
 
         return Verifier.Verify(email.Data.Body, _settings);
@@ -100,7 +100,7 @@ public class BootstrapTests
             }
             .To(ToEmail)
             .Subject(Subject)
-            .UsingBootstrapTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+            .UsingBootstrapTemplate(template, new ViewModel { Name = "LUKE", Numbers = ["1", "2", "3"] });
 
         return Verifier.Verify(email.Data.Body, _settings);
     }

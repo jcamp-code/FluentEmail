@@ -1,10 +1,4 @@
-using System.IO;
-using System.Threading.Tasks;
-using AwesomeAssertions;
 using FluentEmail.Azure.Email;
-using FluentEmail.Core.Interfaces;
-using Xunit;
-using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -17,7 +11,7 @@ public class AzureEmailSenderTests
     private const string ToName = "FluentEmail tester";
     private const string FromName = "AzureEmailSender Test";
     
-    private ISender Sender { get; set; }
+    private ISender Sender { get; }
 
     public AzureEmailSenderTests()
     {

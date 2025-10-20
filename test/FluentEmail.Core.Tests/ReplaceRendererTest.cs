@@ -1,10 +1,4 @@
-﻿using FluentEmail.Core.Defaults;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
-using Xunit;
-using AwesomeAssertions;
-
-namespace FluentEmail.Core.Tests;
+﻿namespace FluentEmail.Core.Tests;
 
 public class ReplaceRendererTest
 {

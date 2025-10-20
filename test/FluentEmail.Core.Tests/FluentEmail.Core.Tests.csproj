@@ -1,10 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\FluentEmail.Core\FluentEmail.Core.csproj" />
     <ProjectReference Include="..\..\src\Senders\FluentEmail.Azure.Email\FluentEmail.Azure.Email.csproj" />
@@ -31,7 +26,6 @@
     <EmbeddedResource Include="EmailTemplates\test-embedded.txt" />
     <EmbeddedResource Include="test-embedded.txt" />
     <PackageReference Include="dotenv.net" Version="4.0.0" />
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <None Update=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

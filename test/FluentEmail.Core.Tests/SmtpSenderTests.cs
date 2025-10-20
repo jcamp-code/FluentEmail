@@ -1,13 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Threading;
-using System.Threading.Tasks;
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
 using FluentEmail.Smtp;
-using Xunit;
-using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Core.Tests;
 
@@ -75,8 +68,8 @@ public class SmtpSenderTests
     {
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        sw.WriteLine("Hey this is some text in an attachment");
-        sw.Flush();
+        await sw.WriteLineAsync("Hey this is some text in an attachment");
+        await sw.FlushAsync(TestContext.Current.CancellationToken);
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -134,7 +127,7 @@ public class SmtpSenderTests
     }
 
     [Fact]
-    public void CancelSendIfCancelationRequested()
+    public void CancelSendIfCancellationRequested()
     {
         var email = TestEmail;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text.Encodings.Web;
@@ -48,7 +49,7 @@ namespace FluentEmail.Liquid.Tests
                 .To(ToEmail)
                 .Subject(Subject);
                 email.Renderer = SetupRenderer();
-                email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+                email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = ["1", "2", "3"] });
 
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
@@ -56,10 +57,10 @@ namespace FluentEmail.Liquid.Tests
         [Fact]
         public void Custom_Context_Values()
         {
-            var renderer = SetupRenderer(new NullFileProvider(), (context, model) =>
+            var renderer = SetupRenderer(new NullFileProvider(), (context, _) =>
             {
                 context.SetValue("FirstName", "Samantha");
-                context.SetValue("IntegerNumbers", new[] {3, 2, 1});
+                context.SetValue("IntegerNumbers", (int[])[3, 2, 1]);
             });
 
             const string template = "sup {{ FirstName }} here is a list {% for i in IntegerNumbers %}{{ i }}{% endfor %}";
@@ -69,7 +70,7 @@ namespace FluentEmail.Liquid.Tests
                 .To(ToEmail)
                 .Subject(Subject);
             email.Renderer = renderer;
-            email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+            email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = ["1", "2", "3"] });
 
             email.Data.Body.Should().Be("sup Samantha here is a list 321");
         }
@@ -88,7 +89,7 @@ namespace FluentEmail.Liquid.Tests
                     .To(ToEmail)
                     .Subject(Subject);
                 email.Renderer = SetupRenderer();
-                email.UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
+                email.UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = ["1", "2", "3"] });
 
                 email.Data.Body.Should().Be("sup " + i + " here is a list 123");
 
@@ -126,7 +127,7 @@ namespace FluentEmail.Liquid.Tests
                 .To(ToEmail)
                 .Subject(Subject);
             email.Renderer = SetupRenderer();
-            email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+            email.UsingTemplate(template, new ViewModel { Name = "LUKE", Numbers = ["1", "2", "3"] });
 
             email.Data.Body.Should().Be("sup LUKE here is a list 123");
         }
@@ -144,7 +145,7 @@ namespace FluentEmail.Liquid.Tests
                     .To(ToEmail)
                     .Subject(Subject);
                 email.Renderer = SetupRenderer();
-                email.UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = new[] { "1", "2", "3" } });
+                email.UsingTemplate(template, new ViewModel { Name = i.ToString(), Numbers = ["1", "2", "3"] });
 
                 email.Data.Body.Should().Be("sup " + i + " here is a list 123");
 
@@ -170,7 +171,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
 			    .To(ToEmail)
 			    .Subject(Subject);
             email.Renderer = renderer;
-            email.UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+            email.UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = ["1", "2", "3"] });
 
 		    email.Data.Body.Should().Be($"<h1>Hello!</h1>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
 	    }
@@ -188,7 +189,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
                 .Subject(Subject);
             email.Renderer = renderer;
             email
-                .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = new[] { "1", "2", "3" } });
+                .UsingTemplate(template, new ViewModel{ Name = "LUKE", Numbers = ["1", "2", "3"] });
 
             email.Data.Body.Should().Be($"<h2>Hello!</h2>{Environment.NewLine}<div>{Environment.NewLine}sup LUKE here is a list 123</div>");
         }
@@ -220,6 +221,7 @@ sup {{ Name }} here is a list {% for i in Numbers %}{{ i }}{% endfor %}";
             }
         }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class ViewModel
         {
             public string Name { get; set; }

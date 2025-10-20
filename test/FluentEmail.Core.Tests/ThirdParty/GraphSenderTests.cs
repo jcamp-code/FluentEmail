@@ -1,10 +1,4 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
 using FluentEmail.Graph;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -17,7 +11,7 @@ public class GraphSenderTests
     private readonly string _toEmail = Credentials.Graph.ToEmail ?? Credentials.ToEmail;
     private const bool SaveSent = false;
 
-    private ISender Sender { get; set; }
+    private ISender Sender { get; }
 
     public GraphSenderTests()
     {
@@ -68,8 +62,8 @@ public class GraphSenderTests
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        sw.WriteLine("Hey this is some text in an attachment");
-        sw.Flush();
+        await sw.WriteLineAsync("Hey this is some text in an attachment");
+        await sw.FlushAsync(TestContext.Current.CancellationToken);
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment

@@ -1,8 +1,4 @@
 ﻿using System.Collections.Generic;
-using FluentEmail.Core.Models;
-using Xunit;
-using AwesomeAssertions;
-using System.Linq;
 
 namespace FluentEmail.Core.Tests;
 
@@ -53,8 +49,8 @@ public class FluentEmailTests
     [Fact]
     public void Can_Add_Multiple_Recipients()
     {
-        string toEmail1 = "bob@test.com";
-        string toEmail2 = "ratface@test.com";
+        var toEmail1 = "bob@test.com";
+        var toEmail2 = "ratface@test.com";
 
         var email = Email
             .From(FromEmail)
@@ -67,9 +63,11 @@ public class FluentEmailTests
     [Fact]
     public void Can_Add_Multiple_Recipients_From_List()
     {
-        var emails = new List<Address>();
-        emails.Add(new Address("email1@email.com"));
-        emails.Add(new Address("email2@email.com"));
+        var emails = new List<Address>
+        {
+            new("email1@email.com"),
+            new("email2@email.com")
+        };
 
         var email = Email
             .From(FromEmail)
@@ -79,11 +77,13 @@ public class FluentEmailTests
     }
 
     [Fact]
-    public void Can_Add_Mutlitple_Recipients_From_String_List()
+    public void Can_Add_Multiple_Recipients_From_String_List()
     {
-        var emails = new List<string>();
-        emails.Add("email1@email.com");
-        emails.Add("email2@email.com");
+        var emails = new List<string>
+        {
+            "email1@email.com",
+            "email2@email.com"
+        };
 
         var email = Email
             .From(FromEmail)
@@ -93,9 +93,9 @@ public class FluentEmailTests
     }
 
     [Fact]
-    public void Can_Add_Mutlitple_Recipients_From_String_Array()
+    public void Can_Add_Multiple_Recipients_From_String_Array()
     {
-        var emails = new string[]
+        var emails = new[]
         {
             "email1@email.com",
             "email2@email.com"
@@ -111,9 +111,11 @@ public class FluentEmailTests
     [Fact]
     public void Can_Add_Multiple_CCRecipients_From_List()
     {
-        var emails = new List<Address>();
-        emails.Add(new Address("email1@email.com"));
-        emails.Add(new Address("email2@email.com"));
+        var emails = new List<Address>
+        {
+            new("email1@email.com"),
+            new("email2@email.com")
+        };
 
         var email = Email
             .From(FromEmail)
@@ -125,9 +127,11 @@ public class FluentEmailTests
     [Fact]
     public void Can_Add_Multiple_BCCRecipients_From_List()
     {
-        var emails = new List<Address>();
-        emails.Add(new Address("email1@email.com"));
-        emails.Add(new Address("email2@email.com"));
+        var emails = new List<Address>
+        {
+            new("email1@email.com"),
+            new("email2@email.com")
+        };
 
         var email = Email
             .From(FromEmail)
@@ -163,11 +167,13 @@ public class FluentEmailTests
     }
 
     [Fact]
-    public void Can_Add_Mutlitple_ReplyTo_From_String_List()
+    public void Can_Add_Multiple_ReplyTo_From_String_List()
     {
-        var emails = new List<string>();
-        emails.Add("email1@email.com");
-        emails.Add("email2@email.com");
+        var emails = new List<string>
+        {
+            "email1@email.com",
+            "email2@email.com"
+        };
 
         var email = Email
             .From(FromEmail)
@@ -177,13 +183,13 @@ public class FluentEmailTests
     }
 
     [Fact]
-    public void Can_Add_Mutlitple_ReplyTo_From_String_Array()
+    public void Can_Add_Multiple_ReplyTo_From_String_Array()
     {
-        var emails = new string[]
-        {
-            "email1@email.com",
-            "email2@email.com"
-        };
+        var emails = new[]
+            {
+                "email1@email.com",
+                "email2@email.com"
+            };
 
         var email = Email
             .From(FromEmail)
@@ -231,8 +237,8 @@ public class FluentEmailTests
     [Fact]
     public void New_Can_Add_Multiple_Recipients()
     {
-        string toEmail1 = "bob@test.com";
-        string toEmail2 = "ratface@test.com";
+        var toEmail1 = "bob@test.com";
+        var toEmail2 = "ratface@test.com";
 
         var email = new Email(FromEmail)
             .To(toEmail1)
@@ -244,9 +250,11 @@ public class FluentEmailTests
     [Fact]
     public void New_Can_Add_Multiple_Recipients_From_List()
     {
-        var emails = new List<Address>();
-        emails.Add(new Address("email1@email.com"));
-        emails.Add(new Address("email2@email.com"));
+        var emails = new List<Address>
+        {
+            new("email1@email.com"),
+            new("email2@email.com")
+        };
 
         var email = new Email(FromEmail)
             .To(emails);
@@ -257,9 +265,11 @@ public class FluentEmailTests
     [Fact]
     public void New_Can_Add_Multiple_CCRecipients_From_List()
     {
-        var emails = new List<Address>();
-        emails.Add(new Address("email1@email.com"));
-        emails.Add(new Address("email2@email.com"));
+        var emails = new List<Address>
+        {
+            new("email1@email.com"),
+            new("email2@email.com")
+        };
 
         var email = new Email(FromEmail)
             .CC(emails);
@@ -270,9 +280,11 @@ public class FluentEmailTests
     [Fact]
     public void New_Can_Add_Multiple_BCCRecipients_From_List()
     {
-        var emails = new List<Address>();
-        emails.Add(new Address("email1@email.com"));
-        emails.Add(new Address("email2@email.com"));
+        var emails = new List<Address>
+        {
+            new("email1@email.com"),
+            new("email2@email.com")
+        };
 
         var email = new Email(FromEmail)
             .BCC(emails);

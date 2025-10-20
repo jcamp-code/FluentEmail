@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using AwesomeAssertions;
 using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
@@ -45,6 +45,7 @@ Children:
             email.Data.Body.Should().Be(expected);
         }
 
+        [SuppressMessage("ReSharper", "StringLiteralTypo")]
         private string Template()
         {
             return @"

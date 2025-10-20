@@ -1,11 +1,5 @@
 ﻿using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
-using FluentEmail.Core.Defaults;
-using FluentEmail.Core.Interfaces;
-using Xunit;
-using AwesomeAssertions;
 
 namespace FluentEmail.Core.Tests;
 
@@ -23,9 +17,9 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" });
+            .UsingTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENT EMAIL" });
 
-        email.Data.Body.Should().Be("yo email FLUENTEMAIL");
+        email.Data.Body.Should().Be("yo email FLUENT EMAIL");
     }
 
     [Fact]
@@ -36,9 +30,9 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL", culture }, culture);
+            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENT EMAIL", culture }, culture);
 
-        email.Data.Body.Should().Be("yo email FLUENTEMAIL");
+        email.Data.Body.Should().Be("yo email FLUENT EMAIL");
     }
 
     [Fact]
@@ -49,9 +43,9 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" }, culture);
+            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENT EMAIL" }, culture);
 
-        email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
+        email.Data.Body.Should().Be("hebrew email FLUENT EMAIL");
     }
 
     [Fact]
@@ -62,15 +56,15 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new {Test = "FLUENTEMAIL"}, culture);
+            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new {Test = "FLUENT EMAIL"}, culture);
 
-        email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
+        email.Data.Body.Should().Be("hebrew email FLUENT EMAIL");
     }
 
     [Fact]
     public void Anonymous_Model_Template_Matches()
     {
-        string template = "sup ##Name##";
+        var template = "sup ##Name##";
 
         var email = Email
             .From(FromEmail)
@@ -86,14 +80,14 @@ public class TemplateEmailTests
     [Fact]
     public void Set_Custom_Template()
     {
-        string template = "sup ##Name## here is a list @foreach(var i in Model.Numbers) { @i }";
+        var template = "sup ##Name## here is a list @foreach(var i in Model.Numbers) { @i }";
 
         var email = Email
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
             .UsingTemplateEngine(new TestTemplate())
-            .UsingTemplate(template, new { Name = "LUKE", Numbers = new string[] { "1", "2", "3" } });
+            .UsingTemplate(template, new { Name = "LUKE", Numbers = (string[])["1", "2", "3"] });
 
         email.Data.Body.Should().Be("custom template");
     }
@@ -105,9 +99,9 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplateFromEmbedded("FluentEmail.Core.Tests.test-embedded.txt", new { Test = "EMBEDDEDTEST" }, ThisAssembly());
+            .UsingTemplateFromEmbedded("FluentEmail.Core.Tests.test-embedded.txt", new { Test = "EMBEDDED TEST" }, ThisAssembly());
 
-        email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
+        email.Data.Body.Should().Be("yo email EMBEDDED TEST");
     }
 
     [Fact]
@@ -118,9 +112,9 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDEDTEST" });
+            .UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDED TEST" });
 
-        email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
+        email.Data.Body.Should().Be("yo email EMBEDDED TEST");
     }
 		
     [Fact]
@@ -131,9 +125,9 @@ public class TemplateEmailTests
             .From(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDEDTEST" });
+            .UsingTemplateFromEmbedded("test-embedded.txt", new { Test = "EMBEDDED TEST" });
 
-        email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
+        email.Data.Body.Should().Be("yo email EMBEDDED TEST");
     }
 		
     [Fact]
@@ -142,9 +136,9 @@ public class TemplateEmailTests
         var email = new Email(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" });
+            .UsingTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENT EMAIL" });
 
-        email.Data.Body.Should().Be("yo email FLUENTEMAIL");
+        email.Data.Body.Should().Be("yo email FLUENT EMAIL");
     }
 
     [Fact]
@@ -154,9 +148,9 @@ public class TemplateEmailTests
         var email = new Email(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL", culture }, culture);
+            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENT EMAIL", culture }, culture);
 
-        email.Data.Body.Should().Be("yo email FLUENTEMAIL");
+        email.Data.Body.Should().Be("yo email FLUENT EMAIL");
     }
 
     [Fact]
@@ -166,9 +160,9 @@ public class TemplateEmailTests
         var email = new Email(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENTEMAIL" }, culture);
+            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new { Test = "FLUENT EMAIL" }, culture);
 
-        email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
+        email.Data.Body.Should().Be("hebrew email FLUENT EMAIL");
     }
 
     [Fact]
@@ -178,9 +172,9 @@ public class TemplateEmailTests
         var email = new Email(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new {Test = "FLUENTEMAIL"}, culture);
+            .UsingCultureTemplateFromFile($"{Path.Combine(Directory.GetCurrentDirectory(), "test.txt")}", new {Test = "FLUENT EMAIL"}, culture);
 
-        email.Data.Body.Should().Be("hebrew email FLUENTEMAIL");
+        email.Data.Body.Should().Be("hebrew email FLUENT EMAIL");
     }
 
 
@@ -188,12 +182,12 @@ public class TemplateEmailTests
     [Fact]
     public void New_Set_Custom_Template()
     {
-        string template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
+        var template = "sup @Model.Name here is a list @foreach(var i in Model.Numbers) { @i }";
 
         var email = new Email(new TestTemplate(), new SaveToDiskSender("/"), FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplate(template, new { Name = "LUKE", Numbers = new string[] { "1", "2", "3" } });
+            .UsingTemplate(template, new { Name = "LUKE", Numbers = (string[])["1", "2", "3"] });
 
         email.Data.Body.Should().Be("custom template");
     }
@@ -204,9 +198,9 @@ public class TemplateEmailTests
         var email = new Email(FromEmail)
             .To(ToEmail)
             .Subject(Subject)
-            .UsingTemplateFromEmbedded("FluentEmail.Core.Tests.test-embedded.txt", new { Test = "EMBEDDEDTEST" }, ThisAssembly());
+            .UsingTemplateFromEmbedded("FluentEmail.Core.Tests.test-embedded.txt", new { Test = "EMBEDDED TEST" }, ThisAssembly());
 
-        email.Data.Body.Should().Be("yo email EMBEDDEDTEST");
+        email.Data.Body.Should().Be("yo email EMBEDDED TEST");
     }		
 }
 

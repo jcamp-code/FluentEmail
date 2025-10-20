@@ -1,11 +1,5 @@
-using AwesomeAssertions;
-using FluentEmail.Core.Interfaces;
-using FluentEmail.Core.Models;
 using FluentEmail.Mailgun;
 using Newtonsoft.Json;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace FluentEmail.Core.Tests.ThirdParty;
 
@@ -18,7 +12,7 @@ public class MailgunSenderTests
     private const string Subject = "Attachment Tests";
     private const string Body = "This email is testing the attachment functionality of MailGun.";
 
-    private ISender Sender { get; set; }
+    private ISender Sender { get; }
 
     public MailgunSenderTests()
     {
@@ -103,8 +97,8 @@ public class MailgunSenderTests
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
-        sw.WriteLine("Hey this is some text in an attachment");
-        sw.Flush();
+        await sw.WriteLineAsync("Hey this is some text in an attachment");
+        await sw.FlushAsync(TestContext.Current.CancellationToken);
         stream.Seek(0, SeekOrigin.Begin);
 
         var attachment = new Attachment
@@ -131,30 +125,28 @@ public class MailgunSenderTests
     public async Task CanSendEmailWithInlineImages()
     {
         Assert.SkipWhen(string.IsNullOrEmpty(_apiKey), "No Mailgun Credentials");
-        
-        using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
+
+        await using var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}");
+        var attachment = new Attachment
         {
-            var attachment = new Attachment
-            {
-                IsInline = true,
-                Data = stream,
-                ContentType = "image/png",
-                Filename = "logotest.png"
-            };
+            IsInline = true,
+            Data = stream,
+            ContentType = "image/png",
+            Filename = "logotest.png"
+        };
 
-            var email = Email
-                .From(_fromEmail)
-                .To(_toEmail)
-                .Subject(Subject)
-                .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
-                      "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
-                .Attach(attachment);
+        var email = Email
+            .From(_fromEmail)
+            .To(_toEmail)
+            .Subject(Subject)
+            .Body("<html>Inline image here: <img src=\"cid:logotest.png\">" +
+                  "<p>You should see an image without an attachment, or without a download prompt, depending on the email client.</p></html>", true)
+            .Attach(attachment);
 
-            email.Sender = Sender;
-            var response = await email.SendAsync();
+        email.Sender = Sender;
+        var response = await email.SendAsync();
 
-            (response.Successful).Should().BeTrue();
-        }
+        (response.Successful).Should().BeTrue();
     }
 
     [Fact]
@@ -176,6 +168,7 @@ public class MailgunSenderTests
 
     private class Variable
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string Var1 { get; set; }
     }
 }
