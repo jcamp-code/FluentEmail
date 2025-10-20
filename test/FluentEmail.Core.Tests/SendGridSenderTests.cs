@@ -1,4 +1,5 @@
 ﻿using FluentEmail.Core;
+using FluentEmail.Core.Tests;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -9,11 +10,11 @@ namespace FluentEmail.SendGrid.Tests
 {
     public class SendGridSenderTests
     {
-        const string apiKey = "missing-credentials"; // TODO: Put your API key here
+        private readonly string apiKey = Credentials.SendGrid.ApiKey;
+        private readonly string toEmail = Credentials.SendGrid.ToEmail ?? Credentials.ToEmail;
+        private readonly string fromEmail = Credentials.SendGrid.FromEmail ?? Credentials.FromEmail;
 
-        const string toEmail = "fluentEmail@mailinator.com";
-        const string toName = "FluentEmail Mailinator";
-        const string fromEmail = "test@fluentmail.com";
+        const string toName = "FluentEmail Test";
         const string fromName = "SendGridSender Test";
 
         [SetUp]
@@ -25,7 +26,7 @@ namespace FluentEmail.SendGrid.Tests
             Email.DefaultSender = sender;
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendEmail()
         {
             const string subject = "SendMail Test";
@@ -42,11 +43,11 @@ namespace FluentEmail.SendGrid.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendTemplateEmail()
         {
             const string subject = "SendMail Test";
-            const string templateId = "123456-insert-your-own-id-here";
+            var templateId = Credentials.SendGrid.Template;
             object templateData = new
             {
                 Name = toName,
@@ -63,7 +64,7 @@ namespace FluentEmail.SendGrid.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendEmailWithReplyTo()
         {
             const string subject = "SendMail Test";
@@ -81,7 +82,7 @@ namespace FluentEmail.SendGrid.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendEmailWithCategory()
         {
             const string subject = "SendMail Test";
@@ -100,7 +101,7 @@ namespace FluentEmail.SendGrid.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendEmailWithAttachments()
         {
             const string subject = "SendMail With Attachments Test";
@@ -129,7 +130,7 @@ namespace FluentEmail.SendGrid.Tests
             }
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendHighPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -147,7 +148,7 @@ namespace FluentEmail.SendGrid.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendLowPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -165,7 +166,7 @@ namespace FluentEmail.SendGrid.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No sendgrid credentials")]
+        [Test] //, Ignore("No sendgrid credentials")]
         public async Task CanSendEmailWithInlineAttachments()
         {
             // Arrange

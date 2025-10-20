@@ -1,7 +1,8 @@
+using FluentEmail.Core.Tests;
+using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using Attachment = FluentEmail.Core.Models.Attachment;
 
 namespace FluentEmail.Azure.Email.Tests
@@ -9,11 +10,11 @@ namespace FluentEmail.Azure.Email.Tests
     [NonParallelizable]
     public class AzureEmailSenderTests
     {
-        const string connectionString = ""; // TODO: Put your ConnectionString here
+        private readonly string toEmail = Credentials.Azure.ToEmail ?? Credentials.ToEmail;
+        private readonly string fromEmail = Credentials.Azure.FromEmail ?? Credentials.FromEmail;
+        private readonly string connectionString = Credentials.Azure.ApiHost;
 
-        const string toEmail = "fluentEmail@mailinator.com";
-        const string toName = "FluentEmail Mailinator";
-        const string fromEmail = "test@fluentmail.com"; // TODO: Put a valid/verified sender here
+        const string toName = "FluentEmail tester";
         const string fromName = "AzureEmailSender Test";
 
         [SetUp]
@@ -25,7 +26,7 @@ namespace FluentEmail.Azure.Email.Tests
             Core.Email.DefaultSender = sender;
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Test] //, Ignore("No azure credentials")]
         public async Task CanSendEmail()
         {
             const string subject = "SendMail Test";
@@ -41,8 +42,8 @@ namespace FluentEmail.Azure.Email.Tests
 
             Assert.IsTrue(response.Successful);
         }
-        
-        [Test, Ignore("No azure credentials")]
+
+        [Test] //, Ignore("No azure credentials")]
         public async Task CanSendEmailWithReplyTo()
         {
             const string subject = "SendMail Test";
@@ -60,7 +61,7 @@ namespace FluentEmail.Azure.Email.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Test] //, Ignore("No azure credentials")]
         public async Task CanSendEmailWithAttachments()
         {
             const string subject = "SendMail With Attachments Test";
@@ -87,7 +88,7 @@ namespace FluentEmail.Azure.Email.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Test] //, Ignore("No azure credentials")]
         public async Task CanSendHighPriorityEmail()
         {
             const string subject = "SendMail Test";
@@ -105,7 +106,7 @@ namespace FluentEmail.Azure.Email.Tests
             Assert.IsTrue(response.Successful);
         }
 
-        [Test, Ignore("No azure credentials")]
+        [Test] //, Ignore("No azure credentials")]
         public async Task CanSendLowPriorityEmail()
         {
             const string subject = "SendMail Test";

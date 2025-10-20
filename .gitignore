@@ -246,3 +246,5 @@ ModelManifest.xml
 
 # Verify test files
 *.received.txt
+
+.env
