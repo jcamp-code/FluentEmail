@@ -27,7 +27,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
             
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of SendGrid Sender.";
@@ -48,7 +48,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendTemplateEmail()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         const string subject = "SendMail Test";
         var templateId = Credentials.SendGrid.Template;
@@ -73,7 +73,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendEmailWithReplyTo()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail with ReplyTo functionality of SendGrid Sender.";
@@ -95,7 +95,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendEmailWithCategory()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail with Categories functionality of SendGrid Sender.";
@@ -118,7 +118,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         const string subject = "SendMail With Attachments Test";
         const string body = "This email is testing the attachment functionality of SendGrid Sender.";
@@ -150,7 +150,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendHighPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of SendGrid Sender.";
@@ -172,7 +172,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendLowPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of SendGrid Sender.";
@@ -194,7 +194,7 @@ public class SendGridSenderTests
     [Test]
     public async Task CanSendEmailWithInlineAttachments()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No SendGrid Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No SendGrid Credentials");
         
         // Arrange
         const string subject = "SendMail With Inline Attachments Test";

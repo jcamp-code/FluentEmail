@@ -27,7 +27,7 @@ public class AzureEmailSenderTests
     [Test]
     public async Task CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_connectionString)) return; // Skip: No Azure Credentials
+        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of Azure Email Sender.";
@@ -47,7 +47,7 @@ public class AzureEmailSenderTests
     [Test]
     public async Task CanSendEmailWithReplyTo()
     {
-        if (string.IsNullOrEmpty(_connectionString)) return; // Skip: No Azure Credentials
+        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail with ReplyTo functionality of Azure Email Sender.";
@@ -68,7 +68,7 @@ public class AzureEmailSenderTests
     [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_connectionString)) return; // Skip: No Azure Credentials
+        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
         
         const string subject = "SendMail With Attachments Test";
         const string body = "This email is testing the attachment functionality of Azure Email Sender.";
@@ -98,7 +98,7 @@ public class AzureEmailSenderTests
     [Test]
     public async Task CanSendHighPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_connectionString)) return; // Skip: No Azure Credentials
+        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of Azure Email Sender.";
@@ -119,7 +119,7 @@ public class AzureEmailSenderTests
     [Test]
     public async Task CanSendLowPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_connectionString)) return; // Skip: No Azure Credentials
+        if (string.IsNullOrEmpty(_connectionString)) Skip.Test("No Azure Credentials");
         
         const string subject = "SendMail Test";
         const string body = "This email is testing send mail functionality of Azure Email Sender.";

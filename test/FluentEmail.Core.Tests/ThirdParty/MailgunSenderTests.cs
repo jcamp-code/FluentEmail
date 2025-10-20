@@ -28,7 +28,7 @@ public class MailgunSenderTests
     [Test]
     public async Task CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -45,7 +45,7 @@ public class MailgunSenderTests
     [Test]
     public async Task GetMessageIdInResponse()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -63,7 +63,7 @@ public class MailgunSenderTests
     [Test]
     public async Task CanSendEmailWithTag()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -81,7 +81,7 @@ public class MailgunSenderTests
     [Test]
     public async Task CanSendEmailWithVariables()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -99,7 +99,7 @@ public class MailgunSenderTests
     [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
@@ -130,7 +130,7 @@ public class MailgunSenderTests
     [Test]
     public async Task CanSendEmailWithInlineImages()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
         
         using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
         {
@@ -160,8 +160,8 @@ public class MailgunSenderTests
     [Test]
     public async Task CanSendEmailWithTemplate()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailgun Credentials
-        if (string.IsNullOrEmpty(Credentials.Mailgun.Template)) return; // Skip: No Mailgun Template
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailgun Credentials");
+        if (string.IsNullOrEmpty(Credentials.Mailgun.Template)) Skip.Test("No Mailgun Template");
 
         var email = Email
             .From(_fromEmail)

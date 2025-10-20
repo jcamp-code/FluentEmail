@@ -33,7 +33,7 @@ public class MailtrapSenderTests
     [Test]
     public void CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
+        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -51,7 +51,7 @@ public class MailtrapSenderTests
     [Test]
     public async Task CanSendEmailAsync()
     {
-        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
+        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
         
         var email = Email
             .From(_fromEmail)
@@ -68,7 +68,7 @@ public class MailtrapSenderTests
     [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
+        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
@@ -99,7 +99,7 @@ public class MailtrapSenderTests
     [Test]
     public async Task CanSendEmailWithInlineImages()
     {
-        if (string.IsNullOrEmpty(_password)) return; // Skip: No Mailtrap Credentials
+        if (string.IsNullOrEmpty(_password)) Skip.Test("No Mailtrap Credentials");
         
         using (var stream = File.OpenRead($"{Path.Combine(Directory.GetCurrentDirectory(), "logotest.png")}"))
         {
@@ -129,7 +129,7 @@ public class MailtrapSenderTests
     [Test]
     public async Task CanSendEmailWithTemplate()
     {
-        if (string.IsNullOrEmpty(_apiKey)) return; // Skip: No Mailtrap Credentials
+        if (string.IsNullOrEmpty(_apiKey)) Skip.Test("No Mailtrap Credentials");
         
         var email = Email.From(_fromEmail).To(_toEmail);
         email.Sender = new MailtrapSender(_username, _apiKey, _host, 587, _apiHost);

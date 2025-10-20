@@ -32,7 +32,7 @@ public class GraphSenderTests
     [Test]
     public void CanSendEmail()
     {
-        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var email = Email
             .From(_senderEmail)
@@ -48,7 +48,7 @@ public class GraphSenderTests
     [Test]
     public async Task CanSendEmailAsync()
     {
-        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var email = Email
             .From(_senderEmail)
@@ -64,7 +64,7 @@ public class GraphSenderTests
     [Test]
     public async Task CanSendEmailWithAttachments()
     {
-        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var stream = new MemoryStream();
         var sw = new StreamWriter(stream);
@@ -94,7 +94,7 @@ public class GraphSenderTests
     [Test]
     public async Task CanSendHighPriorityEmail()
     {
-        if (string.IsNullOrEmpty(_appId)) return; // Skip: No Graph/AD Credentials
+        if (string.IsNullOrEmpty(_appId)) Skip.Test("No Graph/AD Credentials");
         
         var email = Email
             .From(_senderEmail)
