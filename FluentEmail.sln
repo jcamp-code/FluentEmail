@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11121.172 d18.0
+VisualStudioVersion = 18.0.11121.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6DC215BD-05EF-49A6-ADBE-8AE399952EEC}"
 	ProjectSection(SolutionItems) = preProject
@@ -53,8 +53,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentEmail.Postmark", "src
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{1B6987D8-3785-4A78-8637-40E321CC2877}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
-		.github\workflows\publish-packages.yml = .github\workflows\publish-packages.yml
+		.release-please-manifest.json = .release-please-manifest.json
+		.github\workflows\dotnet-test.yml = .github\workflows\dotnet-test.yml
+		.github\workflows\publish-nuget.yml = .github\workflows\publish-nuget.yml
+		release-please-config.json = release-please-config.json
+		.github\workflows\release-please.yml = .github\workflows\release-please.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentEmail.MailPace", "src\Senders\FluentEmail.MailPace\FluentEmail.MailPace.csproj", "{B7A5D5CF-9804-41CA-BF0A-16D5252CE7A9}"

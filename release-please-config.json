@@ -1,0 +1,33 @@
+{
+  "packages": {
+    ".": {
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "simple",
+      "draft": false,
+      "prerelease": false
+    }
+  },
+  "plugins": ["sentence-case"],
+  "changelog-sections": [
+    { "type": "feat", "section": "✨ Features" },
+    { "type": "feature", "section": "✨ Features" },
+    { "type": "fix", "section": "🐛 Bug Fixes" },
+    { "type": "perf", "section": "⚡️Performance Improvements" },
+    { "type": "revert", "section": "⏪️ Reverts" },
+    { "type": "docs", "section": "📝 Documentation" },
+    { "type": "style", "section": "🎨 Styles" },
+    { "type": "chore", "section": "🏡 Miscellaneous Chores" },
+    { "type": "refactor", "section": "♻️ Code Refactoring", "hidden": true },
+    { "type": "test", "section": "✅ Tests", "hidden": true },
+    { "type": "build", "section": "📦️ Build System", "hidden": true },
+    { "type": "ci", "section": "🤖 Continuous Integration", "hidden": true }
+  ],
+  "extra-files": [
+    {
+      "type": "xml",
+      "path": "src/Directory.Build.props",
+      "xpath": "//project/propertygroup/version"
+    }
+  ],
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
