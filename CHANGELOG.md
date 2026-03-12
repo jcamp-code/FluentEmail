@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.1](https://github.com/jcamp-code/FluentEmail/compare/v4.0.0...v4.0.1)
+
+### 🩹 Fixes
+
+* Update MailKit to 4.15.1 to fix CRLF injection vulnerability in MimeKit ([CVE-2026-30227](https://github.com/advisories/GHSA-g7hc-96xr-gvvx))
+
 ## [4.0.0](https://github.com/jcamp-code/FluentEmail/compare/v3.8.0...v4.0.0) (2025-10-26)
 
 
