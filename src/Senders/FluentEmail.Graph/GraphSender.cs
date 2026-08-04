@@ -14,8 +14,10 @@ using System.Threading.Tasks;
 
 namespace FluentEmail.Graph
 {
-    public class GraphSender(GraphServiceClient graphClient, bool saveSentItems) : ISender
+    public class GraphSender(GraphServiceClient graphClient, bool saveSentItems = GraphSender.DefaultSaveSentItems) : ISender
     {
+        public const bool DefaultSaveSentItems = true;
+
         private readonly bool _saveSent = saveSentItems;
         private readonly GraphServiceClient _graphClient = graphClient;
 
@@ -31,7 +33,7 @@ namespace FluentEmail.Graph
 
         public GraphSender(
             TokenCredential tokenCredential,
-            bool SaveSentItems,
+            bool SaveSentItems = DefaultSaveSentItems,
             IEnumerable<string> scopes = null,
             string baseUrl = null
         ) : this(
@@ -46,7 +48,7 @@ namespace FluentEmail.Graph
             string GraphEmailAppId,
             string GraphEmailTenantId,
             string GraphEmailSecret,
-            bool SaveSentItems,
+            bool SaveSentItems = DefaultSaveSentItems,
             IEnumerable<string> scopes = null,
             string baseUrl = null)
             : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems, scopes, baseUrl)
