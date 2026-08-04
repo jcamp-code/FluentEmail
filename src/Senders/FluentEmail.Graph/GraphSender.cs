@@ -109,6 +109,44 @@ namespace FluentEmail.Graph
         {
         }
 
+        private static Recipient? CreateRecipient(Address address)
+        {
+            if (address == null || string.IsNullOrWhiteSpace(address.EmailAddress))
+            {
+                return null;
+            }
+            return new Recipient
+            {
+                EmailAddress = new EmailAddress
+                {
+                    Address = address.EmailAddress,
+                    Name = address.Name
+                }
+            };
+        }
+
+        private static List<Recipient>? CreateRecipients(IList<Address> recipients)
+        {
+            if (recipients.Count == 0)
+            { 
+                return null; 
+            }
+            var result = new List<Recipient>();
+            foreach (var r in recipients)
+            {
+                var recipient = CreateRecipient(r);
+                if (recipient != null)
+                {
+                    result.Add(recipient);
+                }
+            }
+            if (result.Count == 0)
+            {
+                return null;
+            }
+            return result;
+        }
+
         protected virtual Message CreateMessage(IFluentEmail email)
         {
             var message = new Message
@@ -117,98 +155,54 @@ namespace FluentEmail.Graph
                 Body = new ItemBody
                 {
                     Content = email.Data.Body,
-                    ContentType = email.Data.IsHtml ? BodyType.Html : BodyType.Text
-                },
-                From = new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = email.Data.FromAddress.EmailAddress,
-                        Name = email.Data.FromAddress.Name
-                    }
+                    ContentType = email.Data.IsHtml ? BodyType.Html : BodyType.Text,
                 }
             };
 
-            if (email.Data.ToAddresses != null && email.Data.ToAddresses.Count > 0)
+            if (CreateRecipient(email.Data.FromAddress) is { } f)
             {
-                var toRecipients = new List<Recipient>();
-
-                email.Data.ToAddresses.ForEach(r => toRecipients.Add(new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = r.EmailAddress.ToString(),
-                        Name = r.Name
-                    }
-                }));
-
+                message.From = f;
+            }
+            if (CreateRecipients(email.Data.ReplyToAddresses) is { } replyTos)
+            {
+                message.ReplyTo = replyTos;
+            }
+            if (CreateRecipients(email.Data.ToAddresses) is { } toRecipients)
+            {
                 message.ToRecipients = toRecipients;
             }
-
-            if (email.Data.BccAddresses != null && email.Data.BccAddresses.Count > 0)
+            if (CreateRecipients(email.Data.BccAddresses) is { } bccRecipients)
             {
-                var bccRecipients = new List<Recipient>();
-
-                email.Data.BccAddresses.ForEach(r => bccRecipients.Add(new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = r.EmailAddress.ToString(),
-                        Name = r.Name
-                    }
-                }));
-
                 message.BccRecipients = bccRecipients;
             }
-
-            if (email.Data.CcAddresses != null && email.Data.CcAddresses.Count > 0)
+            if (CreateRecipients(email.Data.CcAddresses) is { } ccRecipients)
             {
-                var ccRecipients = new List<Recipient>();
-
-                email.Data.CcAddresses.ForEach(r => ccRecipients.Add(new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = r.EmailAddress.ToString(),
-                        Name = r.Name
-                    }
-                }));
-
                 message.CcRecipients = ccRecipients;
             }
 
-            if (email.Data.Attachments != null && email.Data.Attachments.Count > 0)
+            if (email.Data.Attachments is { Count: > 0 })
             {
                 message.Attachments = [];
-
-                email.Data.Attachments.ForEach(a =>
+                foreach(var a in email.Data.Attachments)
                 {
                     var attachment = new FileAttachment
                     {
                         Name = a.Filename,
                         ContentType = a.ContentType,
+                        IsInline = a.IsInline,
                         ContentBytes = GetAttachmentBytes(a.Data)
                     };
-
                     message.Attachments.Add(attachment);
-                });
+                }
             }
 
-            switch (email.Data.Priority)
+            message.Importance = email.Data.Priority switch
             {
-                case Priority.High:
-                    message.Importance = Importance.High;
-                    break;
-                case Priority.Normal:
-                    message.Importance = Importance.Normal;
-                    break;
-                case Priority.Low:
-                    message.Importance = Importance.Low;
-                    break;
-                default:
-                    message.Importance = Importance.Normal;
-                    break;
-            }
+                Priority.High => (Importance?)Importance.High,
+                Priority.Normal => (Importance?)Importance.Normal,
+                Priority.Low => (Importance?)Importance.Low,
+                _ => (Importance?)Importance.Normal,
+            };
             return message;
         }
 
