@@ -55,12 +55,7 @@ namespace FluentEmail.Graph
         {
         }
 
-        public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
-        {
-            return SendAsync(email, token).GetAwaiter().GetResult();
-        }
-
-        public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
+        protected virtual Message CreateMessage(IFluentEmail email)
         {
             var message = new Message
             {
@@ -80,14 +75,14 @@ namespace FluentEmail.Graph
                 }
             };
 
-            if(email.Data.ToAddresses != null && email.Data.ToAddresses.Count > 0)
+            if (email.Data.ToAddresses != null && email.Data.ToAddresses.Count > 0)
             {
                 var toRecipients = new List<Recipient>();
 
                 email.Data.ToAddresses.ForEach(r => toRecipients.Add(new Recipient
                 {
                     EmailAddress = new EmailAddress
-                    { 
+                    {
                         Address = r.EmailAddress.ToString(),
                         Name = r.Name
                     }
@@ -96,7 +91,7 @@ namespace FluentEmail.Graph
                 message.ToRecipients = toRecipients;
             }
 
-            if(email.Data.BccAddresses != null && email.Data.BccAddresses.Count > 0)
+            if (email.Data.BccAddresses != null && email.Data.BccAddresses.Count > 0)
             {
                 var bccRecipients = new List<Recipient>();
 
@@ -128,7 +123,7 @@ namespace FluentEmail.Graph
                 message.CcRecipients = ccRecipients;
             }
 
-            if(email.Data.Attachments != null && email.Data.Attachments.Count > 0)
+            if (email.Data.Attachments != null && email.Data.Attachments.Count > 0)
             {
                 message.Attachments = [];
 
@@ -145,7 +140,7 @@ namespace FluentEmail.Graph
                 });
             }
 
-            switch(email.Data.Priority)
+            switch (email.Data.Priority)
             {
                 case Priority.High:
                     message.Importance = Importance.High;
@@ -160,40 +155,69 @@ namespace FluentEmail.Graph
                     message.Importance = Importance.Normal;
                     break;
             }
+            return message;
+        }
 
+        public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
+        {
+            return SendAsync(email, token).GetAwaiter().GetResult();
+        }
+
+        public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
+        {
             try
             {
-                var builder = _graphClient.Users[email.Data.FromAddress.EmailAddress].SendMail;
-                await builder.PostAsync(
-                    new()
-                    {
-                        Message = message,
-                        SaveToSentItems = _saveSent
-                    },
-                    default,
-                    token.GetValueOrDefault()
-                );
-                return new SendResponse
+                var message = CreateMessage(email);
+                var cancellationToken = token.GetValueOrDefault();
+                if (email is { Data.FromAddress.EmailAddress: { Length: > 0 } addr})
                 {
-                    MessageId = message.Id
-                };
+                    var builder = _graphClient.Users[addr].SendMail;
+                    await builder.PostAsync(
+                        new()
+                        {
+                            Message = message,
+                            SaveToSentItems = _saveSent
+                        },
+                        default,
+                        cancellationToken
+                    );
+                    return new SendResponse
+                    {
+                        MessageId = message.Id
+                    };
+                }
+                else
+                {
+                    var builder = _graphClient.Me.SendMail;
+                    await builder.PostAsync(
+                        new()
+                        {
+                            Message = message,
+                            SaveToSentItems = _saveSent
+                        },
+                        default,
+                        cancellationToken
+                    );
+                    return new SendResponse
+                    {
+                        MessageId = message.Id
+                    };
+                }
             }
             catch (Exception ex)
             {
                 return new SendResponse
                 {
-                    ErrorMessages = new List<string> { ex.Message }
+                    ErrorMessages = [ ex.Message ]
                 };
             }
         }
 
         private static byte[] GetAttachmentBytes(Stream stream)
         {
-            using(MemoryStream m = new MemoryStream())
-            {
-                stream.CopyTo(m);
-                return m.ToArray();
-            }
+            using var m = new MemoryStream();
+            stream.CopyTo(m);
+            return m.ToArray();
         }
     }
 }
