@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <Description>Process the FluentEmail templates through UnDotNet.BootstrapEmail. Allows for simpler templates.</Description>
     <AssemblyTitle>Fluent Email - Bootstrap</AssemblyTitle>
     <Authors>John Campion</Authors>
@@ -24,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301" />
   </ItemGroup>
 
 </Project>

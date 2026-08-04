@@ -1,56 +1,153 @@
-﻿using FluentEmail.Core;
+﻿using Azure.Core;
+using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
 using FluentEmail.Core.Models;
 using Microsoft.Graph;
-using Microsoft.Graph.Auth;
-using Microsoft.Identity.Client;
+using Microsoft.Graph.Models;
+using Microsoft.Kiota.Abstractions.Authentication;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace FluentEmail.Graph
 {
-    public class GraphSender : ISender
+    public class GraphSender(GraphServiceClient graphClient, bool saveSentItems) : ISender
     {
-        private readonly string _appId;
-        private readonly string _tenantId;
-        private readonly string _graphSecret;
-        private bool _saveSent;
+        public static readonly bool DefaultSaveSentItems = true;
 
-        private ClientCredentialProvider _authProvider;
-        private GraphServiceClient _graphClient;
-        private IConfidentialClientApplication _clientApp;
+        private readonly bool _saveSent = saveSentItems;
+        private readonly GraphServiceClient _graphClient = graphClient;
+
+        public GraphSender(GraphServiceClient graphClient)
+            : this(graphClient, DefaultSaveSentItems)
+        { }
+
+        public GraphSender(
+            IAuthenticationProvider authProvider,
+            bool saveSentItems)
+            : this(authProvider, saveSentItems, null)
+        {
+        }
+
+        public GraphSender(IAuthenticationProvider authProvider, bool saveSentItems, string? baseUrl)
+            : this(
+                  new GraphServiceClient(authProvider, baseUrl),
+                  saveSentItems
+             )
+        {
+        }
+
+        public GraphSender(
+            TokenCredential tokenCredential,
+            bool SaveSentItems,
+            IEnumerable<string> scopes,
+            string? baseUrl
+        ) : this(
+                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, scopes?.ToArray() ?? []),
+                SaveSentItems,
+                baseUrl
+            )
+        {
+        }
+
+        public GraphSender(
+            TokenCredential tokenCredential,
+            bool SaveSentItems,
+            IEnumerable<string> scopes
+        ) : this(
+                tokenCredential,
+                SaveSentItems,
+                scopes,
+                null
+            )
+        {
+        }
+
+        public GraphSender(
+            TokenCredential tokenCredential,
+            bool SaveSentItems
+        ) : this(
+                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, Array.Empty<string>()),
+                SaveSentItems,
+                null
+            )
+        {
+        }
+
+        public GraphSender(
+            string GraphEmailAppId,
+            string GraphEmailTenantId,
+            string GraphEmailSecret,
+            bool SaveSentItems,
+            IEnumerable<string> scopes,
+            string? baseUrl)
+            : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems, scopes, baseUrl)
+        {
+        }
 
         public GraphSender(
             string GraphEmailAppId,
             string GraphEmailTenantId,
             string GraphEmailSecret,
             bool SaveSentItems)
+            : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems)
         {
-            _appId = GraphEmailAppId;
-            _tenantId = GraphEmailTenantId;
-            _graphSecret = GraphEmailSecret;
-            _saveSent = SaveSentItems;
-
-            _clientApp = ConfidentialClientApplicationBuilder
-                .Create(_appId)
-                .WithTenantId(_tenantId)
-                .WithClientSecret(_graphSecret)
-                .Build();
-
-            _authProvider = new ClientCredentialProvider(_clientApp);
-
-            _graphClient = new GraphServiceClient(_authProvider);
         }
 
-        public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
+        public GraphSender(
+            string GraphEmailAppId,
+            string GraphEmailTenantId,
+            string GraphEmailSecret,
+            bool SaveSentItems,
+            IEnumerable<string> scopes)
+            : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems, scopes, null)
         {
-            return SendAsync(email, token).GetAwaiter().GetResult();
         }
 
-        public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
+        private static Recipient? CreateRecipient(Address address)
+        {
+            if (address == null || string.IsNullOrWhiteSpace(address.EmailAddress))
+            {
+                return null;
+            }
+            return new Recipient
+            {
+                EmailAddress = new EmailAddress
+                {
+                    Address = address.EmailAddress,
+                    Name = address.Name
+                }
+            };
+        }
+
+        private static List<Recipient>? CreateRecipients(IList<Address> recipients)
+        {
+            if (recipients.Count == 0)
+            { 
+                return null; 
+            }
+            var result = new List<Recipient>();
+            foreach (var r in recipients)
+            {
+                var recipient = CreateRecipient(r);
+                if (recipient != null)
+                {
+                    result.Add(recipient);
+                }
+            }
+            if (result.Count == 0)
+            {
+                return null;
+            }
+            return result;
+        }
+
+        protected virtual Message CreateMessage(IFluentEmail email)
         {
             var message = new Message
             {
@@ -58,127 +155,146 @@ namespace FluentEmail.Graph
                 Body = new ItemBody
                 {
                     Content = email.Data.Body,
-                    ContentType = email.Data.IsHtml ? BodyType.Html : BodyType.Text
-                },
-                From = new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = email.Data.FromAddress.EmailAddress,
-                        Name = email.Data.FromAddress.Name
-                    }
+                    ContentType = email.Data.IsHtml ? BodyType.Html : BodyType.Text,
                 }
             };
 
-            if(email.Data.ToAddresses != null && email.Data.ToAddresses.Count > 0)
+            if (CreateRecipient(email.Data.FromAddress) is { } f)
             {
-                var toRecipients = new List<Recipient>();
-
-                email.Data.ToAddresses.ForEach(r => toRecipients.Add(new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    { 
-                        Address = r.EmailAddress.ToString(),
-                        Name = r.Name
-                    }
-                }));
-
+                message.From = f;
+            }
+            if (CreateRecipients(email.Data.ReplyToAddresses) is { } replyTos)
+            {
+                message.ReplyTo = replyTos;
+            }
+            if (CreateRecipients(email.Data.ToAddresses) is { } toRecipients)
+            {
                 message.ToRecipients = toRecipients;
             }
-
-            if(email.Data.BccAddresses != null && email.Data.BccAddresses.Count > 0)
+            if (CreateRecipients(email.Data.BccAddresses) is { } bccRecipients)
             {
-                var bccRecipients = new List<Recipient>();
-
-                email.Data.BccAddresses.ForEach(r => bccRecipients.Add(new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = r.EmailAddress.ToString(),
-                        Name = r.Name
-                    }
-                }));
-
                 message.BccRecipients = bccRecipients;
             }
-
-            if (email.Data.CcAddresses != null && email.Data.CcAddresses.Count > 0)
+            if (CreateRecipients(email.Data.CcAddresses) is { } ccRecipients)
             {
-                var ccRecipients = new List<Recipient>();
-
-                email.Data.CcAddresses.ForEach(r => ccRecipients.Add(new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = r.EmailAddress.ToString(),
-                        Name = r.Name
-                    }
-                }));
-
                 message.CcRecipients = ccRecipients;
             }
 
-            if(email.Data.Attachments != null && email.Data.Attachments.Count > 0)
+            if (email.Data.Attachments is { Count: > 0 })
             {
-                message.Attachments = new MessageAttachmentsCollectionPage();
-
-                email.Data.Attachments.ForEach(a =>
+                message.Attachments = [];
+                foreach(var a in email.Data.Attachments)
                 {
                     var attachment = new FileAttachment
                     {
                         Name = a.Filename,
                         ContentType = a.ContentType,
+                        ContentId = a.ContentId,
+                        IsInline = a.IsInline,
                         ContentBytes = GetAttachmentBytes(a.Data)
                     };
-
                     message.Attachments.Add(attachment);
-                });
+                }
             }
 
-            switch(email.Data.Priority)
+            message.Importance = email.Data.Priority switch
             {
-                case Priority.High:
-                    message.Importance = Importance.High;
-                    break;
-                case Priority.Normal:
-                    message.Importance = Importance.Normal;
-                    break;
-                case Priority.Low:
-                    message.Importance = Importance.Low;
-                    break;
-                default:
-                    message.Importance = Importance.Normal;
-                    break;
+                Priority.High => (Importance?)Importance.High,
+                Priority.Normal => (Importance?)Importance.Normal,
+                Priority.Low => (Importance?)Importance.Low,
+                _ => (Importance?)Importance.Normal,
+            };
+
+            if (email.Data.Headers.Any())
+            {
+                var headers = email.Data.Headers
+                .Select(header => new InternetMessageHeader { Name = header.Key, Value = header.Value })
+                .ToList();
+                message.InternetMessageHeaders = headers;
             }
 
+            return message;
+        }
+
+        Task<SendResponse> ISender.SendAsync(IFluentEmail email, CancellationToken? token)
+        {
+            return SendAsync(email, token);
+        }
+
+        public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
+        {
+            return SendAsync(email, token).GetAwaiter().GetResult();
+        }
+
+        public Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token)
+        {
+            if (token.HasValue)
+            {
+                return SendAsync(email, token.Value);
+            }
+            else
+            {
+                return SendAsync(email, CancellationToken.None);
+            }
+        }
+
+        public Task<SendResponse> SendAsync(IFluentEmail email)
+            => SendAsync(email, CancellationToken.None);
+
+        public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken cancellationToken)
+        {
             try
             {
-                await _graphClient.Users[email.Data.FromAddress.EmailAddress]
-                    .SendMail(message, _saveSent)
-                    .Request()
-                    .PostAsync();
-
-                return new SendResponse
+                var message = CreateMessage(email);
+                if (email is { Data.FromAddress.EmailAddress: { Length: > 0 } addr})
                 {
-                    MessageId = message.Id
-                };
+                    var builder = _graphClient.Users[addr].SendMail;
+                    await builder.PostAsync(
+                        new()
+                        {
+                            Message = message,
+                            SaveToSentItems = _saveSent
+                        },
+                        default,
+                        cancellationToken
+                    );
+                    return new SendResponse
+                    {
+                        MessageId = message.Id
+                    };
+                }
+                else
+                {
+                    var builder = _graphClient.Me.SendMail;
+                    await builder.PostAsync(
+                        new()
+                        {
+                            Message = message,
+                            SaveToSentItems = _saveSent
+                        },
+                        default,
+                        cancellationToken
+                    );
+                    return new SendResponse
+                    {
+                        MessageId = message.Id
+                    };
+                }
             }
             catch (Exception ex)
             {
                 return new SendResponse
                 {
-                    ErrorMessages = new List<string> { ex.Message }
+                    ErrorMessages = [ ex.Message ]
                 };
             }
         }
 
         private static byte[] GetAttachmentBytes(Stream stream)
         {
-            using(MemoryStream m = new MemoryStream())
-            {
-                stream.CopyTo(m);
-                return m.ToArray();
-            }
+            using var m = new MemoryStream();
+            stream.CopyTo(m);
+            return m.ToArray();
         }
     }
 }

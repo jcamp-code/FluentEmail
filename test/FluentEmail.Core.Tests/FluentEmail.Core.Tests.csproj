@@ -25,4 +25,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="AwesomeAssertions" Version="9.5.0" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageReference Update="xunit.v3" Version="3.2.2" />
+  </ItemGroup>
+
 </Project>
