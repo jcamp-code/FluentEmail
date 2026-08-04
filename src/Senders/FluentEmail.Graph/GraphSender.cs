@@ -72,7 +72,7 @@ namespace FluentEmail.Graph
             TokenCredential tokenCredential,
             bool SaveSentItems
         ) : this(
-                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, []),
+                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, Array.Empty<string>()),
                 SaveSentItems,
                 null
             )
