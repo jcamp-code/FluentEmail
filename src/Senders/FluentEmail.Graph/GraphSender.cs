@@ -165,12 +165,13 @@ namespace FluentEmail.Graph
             {
                 var builder = _graphClient.Users[email.Data.FromAddress.EmailAddress].SendMail;
                 await builder.PostAsync(
-                    body: new()
+                    new()
                     {
                         Message = message,
                         SaveToSentItems = _saveSent
                     },
-                    cancellationToken: token.GetValueOrDefault()
+                    default,
+                    token.GetValueOrDefault()
                 );
                 return new SendResponse
                 {
