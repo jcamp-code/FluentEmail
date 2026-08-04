@@ -60,8 +60,9 @@ namespace FluentEmail.Graph
             bool SaveSentItems,
             IEnumerable<string> scopes
         ) : this(
-                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, scopes?.ToArray() ?? []),
+                tokenCredential,
                 SaveSentItems,
+                scopes,
                 null
             )
         {
@@ -218,7 +219,14 @@ namespace FluentEmail.Graph
 
         public Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
         {
-            return SendAsync(email, token.GetValueOrDefault());
+            if (token.HasValue)
+            {
+                return SendAsync(email, token.Value);
+            }
+            else
+            {
+                return SendAsync(email, CancellationToken.None);
+            }
         }
 
         public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken cancellationToken)
