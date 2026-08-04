@@ -25,7 +25,7 @@ namespace FluentEmail.Graph
             bool saveSentItems,
             string baseUrl = null)
             : this(
-                  new GraphServiceClient(authProvider, baseUrl ?? "https://graph.microsoft.com/v1.0"),
+                  new GraphServiceClient(authProvider, baseUrl),
                   saveSentItems
              )
         {
