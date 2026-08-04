@@ -216,12 +216,16 @@ namespace FluentEmail.Graph
             return SendAsync(email, token).GetAwaiter().GetResult();
         }
 
-        public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
+        public Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
+        {
+            return SendAsync(email, token.GetValueOrDefault());
+        }
+
+        public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken cancellationToken)
         {
             try
             {
                 var message = CreateMessage(email);
-                var cancellationToken = token.GetValueOrDefault();
                 if (email is { Data.FromAddress.EmailAddress: { Length: > 0 } addr})
                 {
                     var builder = _graphClient.Users[addr].SendMail;
