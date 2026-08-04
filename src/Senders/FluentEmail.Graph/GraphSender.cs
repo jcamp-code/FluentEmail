@@ -12,18 +12,29 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace FluentEmail.Graph
 {
-    public class GraphSender(GraphServiceClient graphClient, bool saveSentItems = GraphSender.DefaultSaveSentItems) : ISender
+    public class GraphSender(GraphServiceClient graphClient, bool saveSentItems) : ISender
     {
-        public const bool DefaultSaveSentItems = true;
+        public static readonly bool DefaultSaveSentItems = true;
 
         private readonly bool _saveSent = saveSentItems;
         private readonly GraphServiceClient _graphClient = graphClient;
 
-        public GraphSender(IAuthenticationProvider authProvider,
-            bool saveSentItems,
-            string baseUrl = null)
+        public GraphSender(GraphServiceClient graphClient)
+            : this(graphClient, DefaultSaveSentItems)
+        { }
+
+        public GraphSender(
+            IAuthenticationProvider authProvider,
+            bool saveSentItems)
+            : this(authProvider, saveSentItems, null)
+        {
+        }
+
+        public GraphSender(IAuthenticationProvider authProvider, bool saveSentItems, string? baseUrl)
             : this(
                   new GraphServiceClient(authProvider, baseUrl),
                   saveSentItems
@@ -33,9 +44,9 @@ namespace FluentEmail.Graph
 
         public GraphSender(
             TokenCredential tokenCredential,
-            bool SaveSentItems = DefaultSaveSentItems,
-            IEnumerable<string> scopes = null,
-            string baseUrl = null
+            bool SaveSentItems,
+            IEnumerable<string> scopes,
+            string? baseUrl
         ) : this(
                 new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, scopes?.ToArray() ?? []),
                 SaveSentItems,
@@ -45,13 +56,55 @@ namespace FluentEmail.Graph
         }
 
         public GraphSender(
+            TokenCredential tokenCredential,
+            bool SaveSentItems,
+            IEnumerable<string> scopes
+        ) : this(
+                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, scopes?.ToArray() ?? []),
+                SaveSentItems,
+                null
+            )
+        {
+        }
+
+        public GraphSender(
+            TokenCredential tokenCredential,
+            bool SaveSentItems
+        ) : this(
+                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, []),
+                SaveSentItems,
+                null
+            )
+        {
+        }
+
+        public GraphSender(
             string GraphEmailAppId,
             string GraphEmailTenantId,
             string GraphEmailSecret,
-            bool SaveSentItems = DefaultSaveSentItems,
-            IEnumerable<string> scopes = null,
-            string baseUrl = null)
+            bool SaveSentItems,
+            IEnumerable<string> scopes,
+            string? baseUrl)
             : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems, scopes, baseUrl)
+        {
+        }
+
+        public GraphSender(
+            string GraphEmailAppId,
+            string GraphEmailTenantId,
+            string GraphEmailSecret,
+            bool SaveSentItems)
+            : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems)
+        {
+        }
+
+        public GraphSender(
+            string GraphEmailAppId,
+            string GraphEmailTenantId,
+            string GraphEmailSecret,
+            bool SaveSentItems,
+            IEnumerable<string> scopes)
+            : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems, scopes, null)
         {
         }
 
