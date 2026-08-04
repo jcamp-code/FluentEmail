@@ -189,6 +189,7 @@ namespace FluentEmail.Graph
                     {
                         Name = a.Filename,
                         ContentType = a.ContentType,
+                        ContentId = a.ContentId,
                         IsInline = a.IsInline,
                         ContentBytes = GetAttachmentBytes(a.Data)
                     };
@@ -203,6 +204,15 @@ namespace FluentEmail.Graph
                 Priority.Low => (Importance?)Importance.Low,
                 _ => (Importance?)Importance.Normal,
             };
+
+            if (email.Data.Headers.Any())
+            {
+                var headers = email.Data.Headers
+                .Select(header => new InternetMessageHeader { Name = header.Key, Value = header.Value })
+                .ToList();
+                message.InternetMessageHeaders = headers;
+            }
+
             return message;
         }
 
