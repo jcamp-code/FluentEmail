@@ -217,7 +217,7 @@ namespace FluentEmail.Graph
             return SendAsync(email, token).GetAwaiter().GetResult();
         }
 
-        public Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
+        public Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token)
         {
             if (token.HasValue)
             {
@@ -228,6 +228,9 @@ namespace FluentEmail.Graph
                 return SendAsync(email, CancellationToken.None);
             }
         }
+
+        public Task<SendResponse> SendAsync(IFluentEmail email)
+            => SendAsync(email, CancellationToken.None);
 
         public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken cancellationToken)
         {
