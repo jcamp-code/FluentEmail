@@ -1,48 +1,56 @@
-﻿using FluentEmail.Core;
+﻿using Azure.Core;
+using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
 using FluentEmail.Core.Models;
 using Microsoft.Graph;
-using Microsoft.Graph.Auth;
-using Microsoft.Identity.Client;
+using Microsoft.Graph.Models;
+using Microsoft.Kiota.Abstractions.Authentication;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FluentEmail.Graph
 {
-    public class GraphSender : ISender
+    public class GraphSender(GraphServiceClient graphClient, bool saveSentItems) : ISender
     {
-        private readonly string _appId;
-        private readonly string _tenantId;
-        private readonly string _graphSecret;
-        private bool _saveSent;
+        private readonly bool _saveSent = saveSentItems;
+        private readonly GraphServiceClient _graphClient = graphClient;
 
-        private ClientCredentialProvider _authProvider;
-        private GraphServiceClient _graphClient;
-        private IConfidentialClientApplication _clientApp;
+        public GraphSender(IAuthenticationProvider authProvider,
+            bool saveSentItems,
+            string baseUrl = null)
+            : this(
+                  new GraphServiceClient(authProvider, baseUrl ?? "https://graph.microsoft.com/v1.0"),
+                  saveSentItems
+             )
+        {
+        }
+
+        public GraphSender(
+            TokenCredential tokenCredential,
+            bool SaveSentItems,
+            IEnumerable<string> scopes = null,
+            string baseUrl = null
+        ) : this(
+                new Microsoft.Graph.Authentication.AzureIdentityAuthenticationProvider(tokenCredential, null, null, true, scopes?.ToArray() ?? []),
+                SaveSentItems,
+                baseUrl
+            )
+        {
+        }
 
         public GraphSender(
             string GraphEmailAppId,
             string GraphEmailTenantId,
             string GraphEmailSecret,
-            bool SaveSentItems)
+            bool SaveSentItems,
+            IEnumerable<string> scopes = null,
+            string baseUrl = null)
+            : this(new ClientAuthHandler(GraphEmailAppId, GraphEmailTenantId, GraphEmailSecret), SaveSentItems, scopes, baseUrl)
         {
-            _appId = GraphEmailAppId;
-            _tenantId = GraphEmailTenantId;
-            _graphSecret = GraphEmailSecret;
-            _saveSent = SaveSentItems;
-
-            _clientApp = ConfidentialClientApplicationBuilder
-                .Create(_appId)
-                .WithTenantId(_tenantId)
-                .WithClientSecret(_graphSecret)
-                .Build();
-
-            _authProvider = new ClientCredentialProvider(_clientApp);
-
-            _graphClient = new GraphServiceClient(_authProvider);
         }
 
         public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
@@ -120,7 +128,7 @@ namespace FluentEmail.Graph
 
             if(email.Data.Attachments != null && email.Data.Attachments.Count > 0)
             {
-                message.Attachments = new MessageAttachmentsCollectionPage();
+                message.Attachments = [];
 
                 email.Data.Attachments.ForEach(a =>
                 {
@@ -153,11 +161,12 @@ namespace FluentEmail.Graph
 
             try
             {
-                await _graphClient.Users[email.Data.FromAddress.EmailAddress]
-                    .SendMail(message, _saveSent)
-                    .Request()
-                    .PostAsync();
-
+                var builder = _graphClient.Users[email.Data.FromAddress.EmailAddress].SendMail;
+                await builder.PostAsync(new()
+                {
+                    Message = message,
+                    SaveToSentItems = _saveSent
+                });
                 return new SendResponse
                 {
                     MessageId = message.Id

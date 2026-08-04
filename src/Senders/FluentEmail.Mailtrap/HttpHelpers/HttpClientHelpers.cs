@@ -6,8 +6,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
-using FluentEmail.Core;
-using System.Net.Http.Headers;
 
 namespace FluentEmail.Mailtrap.HttpHelpers
 {

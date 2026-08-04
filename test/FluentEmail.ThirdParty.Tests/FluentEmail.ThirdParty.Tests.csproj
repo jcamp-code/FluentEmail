@@ -19,7 +19,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <EmbeddedResource Include="test-embedded.txt" />
-    <PackageReference Include="dotenv.net" Version="4.0.0" />
+    <PackageReference Include="dotenv.net" Version="4.0.2" />
     <None Update=".en-johnv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -32,6 +32,12 @@
     <None Update="test-binary.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="AwesomeAssertions" Version="9.5.0" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageReference Update="xunit.v3" Version="3.2.2" />
   </ItemGroup>
 
 </Project>
