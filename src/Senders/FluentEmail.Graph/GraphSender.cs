@@ -212,6 +212,11 @@ namespace FluentEmail.Graph
             return message;
         }
 
+        Task<SendResponse> ISender.SendAsync(IFluentEmail email, CancellationToken? token)
+        {
+            return SendAsync(email, token);
+        }
+
         public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
         {
             return SendAsync(email, token).GetAwaiter().GetResult();
