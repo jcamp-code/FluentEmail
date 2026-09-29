@@ -2,6 +2,7 @@ using FluentEmail.Core;
 using FluentEmail.Core.Interfaces;
 using FluentEmail.Core.Models;
 using System;
+using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
@@ -77,6 +78,7 @@ namespace FluentEmail.Smtp
         {
             var data = email.Data;
             MailMessage message = null;
+            AlternateView htmlView = null;
 
             // Smtp seems to require the HTML version as the alternative.
             if (!string.IsNullOrEmpty(data.PlaintextAlternativeBody))
@@ -92,6 +94,22 @@ namespace FluentEmail.Smtp
                 var mimeType = new System.Net.Mime.ContentType("text/html; charset=UTF-8");
                 AlternateView alternate = AlternateView.CreateAlternateViewFromString(data.Body, mimeType);
                 message.AlternateViews.Add(alternate);
+                htmlView = alternate;
+            }
+            else if (data.IsHtml && data.Attachments.Any(IsLinkedResource))
+            {
+                // Inline images can only be embedded through an AlternateView's
+                // LinkedResources, so the HTML body goes into one.
+                message = new MailMessage
+                {
+                    Subject = data.Subject,
+                    SubjectEncoding = Encoding.UTF8,
+                    From = new MailAddress(data.FromAddress.EmailAddress, data.FromAddress.Name)
+                };
+
+                var mimeType = new System.Net.Mime.ContentType("text/html; charset=UTF-8");
+                htmlView = AlternateView.CreateAlternateViewFromString(data.Body, mimeType);
+                message.AlternateViews.Add(htmlView);
             }
             else
             {
@@ -146,6 +164,22 @@ namespace FluentEmail.Smtp
 
             data.Attachments.ForEach(x =>
             {
+                // An inline attachment referenced from the HTML (<img src="cid:...">)
+                // becomes a LinkedResource of the HTML view, which produces
+                // multipart/related. Added as a regular attachment it would be sent
+                // as multipart/mixed with "Content-Disposition: attachment", and
+                // mail clients show it as a separate attachment.
+                if (htmlView != null && IsLinkedResource(x))
+                {
+                    var resource = x.ContentType == null
+                        ? new LinkedResource(x.Data)
+                        : new LinkedResource(x.Data, x.ContentType);
+                    resource.ContentId = x.ContentId;
+                    resource.ContentType.Name = x.Filename;
+                    htmlView.LinkedResources.Add(resource);
+                    return;
+                }
+
                 System.Net.Mail.Attachment a = new System.Net.Mail.Attachment(x.Data, x.Filename, x.ContentType);
 
                 a.ContentId = x.ContentId;
@@ -155,6 +189,9 @@ namespace FluentEmail.Smtp
 
             return message;
         }
+
+        private static bool IsLinkedResource(FluentEmail.Core.Models.Attachment attachment) =>
+            attachment.IsInline && !string.IsNullOrEmpty(attachment.ContentId);
     }
 
     // Taken from https://stackoverflow.com/questions/28333396/smtpclient-sendmailasync-causes-deadlock-when-throwing-a-specific-exception/28445791#28445791

@@ -126,6 +126,88 @@ public class SmtpSenderTests
         (response.Successful).Should().BeTrue();
     }
 
+    private static Attachment InlineImage() => new()
+    {
+        Data = new MemoryStream([0x89, 0x50, 0x4E, 0x47]),
+        ContentType = "image/png",
+        Filename = "logo.png",
+        ContentId = "logo",
+        IsInline = true
+    };
+
+    private static string ReadSentEmail(string tempDirectory) =>
+        File.ReadAllText(Directory.EnumerateFiles(tempDirectory, "*.eml").Single());
+
+    [Fact]
+    public async Task InlineAttachmentIsEmbeddedInHtmlBody()
+    {
+        var email = TestEmail
+            .Body("<p><img src=\"cid:logo\"></p>", true)
+            .Attach(InlineImage());
+
+        email.Sender = GetSender(out var s);
+
+        var response = await email.SendAsync();
+        var eml = ReadSentEmail(s);
+
+        DeleteTemp(s);
+
+        (response.Successful).Should().BeTrue();
+        eml.Should().Contain("Content-Type: multipart/related");
+        eml.Should().Contain("Content-ID: <logo>");
+        eml.Should().NotContain("Content-Disposition: attachment");
+    }
+
+    [Fact]
+    public async Task InlineAttachmentIsEmbeddedInHtmlAlternateView()
+    {
+        var email = TestEmail
+            .Body("<p><img src=\"cid:logo\"></p>", true)
+            .PlaintextAlternativeBody("Plain text version")
+            .Attach(InlineImage());
+
+        email.Sender = GetSender(out var s);
+
+        var response = await email.SendAsync();
+        var eml = ReadSentEmail(s);
+
+        DeleteTemp(s);
+
+        (response.Successful).Should().BeTrue();
+        eml.Should().Contain("Content-Type: multipart/alternative");
+        eml.Should().Contain("Content-Type: multipart/related");
+        eml.Should().Contain("Content-ID: <logo>");
+        eml.Should().NotContain("Content-Disposition: attachment");
+    }
+
+    [Fact]
+    public async Task RegularAttachmentStaysAttachmentNextToInlineAttachment()
+    {
+        var email = TestEmail
+            .Body("<p><img src=\"cid:logo\"></p>", true)
+            .Attach(InlineImage())
+            .Attach(new Attachment
+            {
+                Data = new MemoryStream("some text"u8.ToArray()),
+                ContentType = "text/plain",
+                Filename = "report.txt"
+            });
+
+        email.Sender = GetSender(out var s);
+
+        var response = await email.SendAsync();
+        var eml = ReadSentEmail(s);
+
+        DeleteTemp(s);
+
+        (response.Successful).Should().BeTrue();
+        eml.Should().Contain("Content-Type: multipart/mixed");
+        eml.Should().Contain("Content-Type: multipart/related");
+        eml.Should().Contain("Content-ID: <logo>");
+        eml.Should().Contain("Content-Type: text/plain; name=report.txt");
+        eml.Split("Content-Disposition: attachment").Length.Should().Be(2, "only report.txt is a regular attachment");
+    }
+
     [Fact]
     public void CancelSendIfCancellationRequested()
     {
